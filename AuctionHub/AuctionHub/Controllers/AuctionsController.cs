@@ -42,6 +42,50 @@ public class AuctionsController : Controller
         return View(auctions);
     }
 
+    [AllowAnonymous]
+    [HttpGet]
+    public async Task<IActionResult> Details(int id)
+    {
+        var auction = await _context.Auctions
+            .Include(a => a.Category)
+            .Include(a => a.Seller)
+            .Include(a => a.Bids)
+                .ThenInclude(b => b.Bidder)
+            .FirstOrDefaultAsync(a => a.Id == id);
+
+        if (auction == null)
+        {
+            return NotFound();
+        }
+
+        var model = new AuctionDetailsViewModel
+        {
+            Id = auction.Id,
+            Title = auction.Title,
+            Description = auction.Description,
+            ImageUrl = auction.ImageUrl,
+            CurrentPrice = auction.CurrentPrice,
+            StartPrice = auction.StartPrice,
+            EndTime = auction.EndTime,
+            Category = auction.Category.Name,
+            Seller = auction.Seller.UserName ?? auction.Seller.Email ?? "Unknown",
+            SellerId = auction.SellerId,
+            IsActive = auction.IsActive && auction.EndTime > DateTime.Now,
+            Bids = auction.Bids
+                .OrderByDescending(b => b.BidTime)
+                .Select(b => new BidViewModel
+                {
+                    Amount = b.Amount,
+                    BidTime = b.BidTime,
+                    Bidder = b.Bidder.UserName ?? b.Bidder.Email ?? "Unknown"
+                })
+                .ToList(),
+            NewBidAmount = auction.CurrentPrice + 1 // Suggest a bid
+        };
+
+        return View(model);
+    }
+
     [HttpGet]
     public async Task<IActionResult> Create()
     {
