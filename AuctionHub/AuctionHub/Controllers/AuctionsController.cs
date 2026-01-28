@@ -205,6 +205,100 @@ public class AuctionsController : Controller
     }
 
     [HttpGet]
+    public async Task<IActionResult> Edit(int id)
+    {
+        var auction = await _context.Auctions.FindAsync(id);
+
+        if (auction == null)
+        {
+            return NotFound();
+        }
+
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (auction.SellerId != currentUserId)
+        {
+            return Forbid();
+        }
+
+        var model = new AuctionFormModel
+        {
+            Title = auction.Title,
+            Description = auction.Description,
+            ImageUrl = auction.ImageUrl,
+            StartPrice = auction.StartPrice,
+            EndTime = auction.EndTime,
+            CategoryId = auction.CategoryId,
+            Categories = await GetCategoriesAsync()
+        };
+
+        return View(model);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Edit(int id, AuctionFormModel model)
+    {
+        var auction = await _context.Auctions.FindAsync(id);
+
+        if (auction == null)
+        {
+            return NotFound();
+        }
+
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (auction.SellerId != currentUserId)
+        {
+            return Forbid();
+        }
+
+        if (!ModelState.IsValid)
+        {
+            model.Categories = await GetCategoriesAsync();
+            return View(model);
+        }
+
+        auction.Title = model.Title;
+        auction.Description = model.Description;
+        auction.ImageUrl = model.ImageUrl;
+        auction.EndTime = model.EndTime;
+        auction.CategoryId = model.CategoryId;
+
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Details), new { id = auction.Id });
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var auction = await _context.Auctions
+            .Include(a => a.Bids)
+            .FirstOrDefaultAsync(a => a.Id == id);
+
+        if (auction == null)
+        {
+            return NotFound();
+        }
+
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (auction.SellerId != currentUserId)
+        {
+            return Forbid();
+        }
+
+        if (auction.Bids.Any())
+        {
+            TempData["Error"] = "Cannot delete an auction that already has bids.";
+            return RedirectToAction(nameof(Details), new { id = id });
+        }
+
+        _context.Auctions.Remove(auction);
+        await _context.SaveChangesAsync();
+
+        TempData["Success"] = "Auction deleted successfully.";
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
     public async Task<IActionResult> Create()
     {
         var model = new AuctionFormModel
