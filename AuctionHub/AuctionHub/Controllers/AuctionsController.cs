@@ -21,11 +21,23 @@ public class AuctionsController : Controller
 
     [AllowAnonymous]
     [HttpGet]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string? searchTerm, int? categoryId)
     {
-        var auctions = await _context.Auctions
+        var query = _context.Auctions
             .Include(a => a.Category)
-            .Where(a => a.IsActive && a.EndTime > DateTime.Now)
+            .Where(a => a.IsActive && a.EndTime > DateTime.Now);
+
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            query = query.Where(a => a.Title.Contains(searchTerm) || a.Description.Contains(searchTerm));
+        }
+
+        if (categoryId.HasValue)
+        {
+            query = query.Where(a => a.CategoryId == categoryId.Value);
+        }
+
+        var auctions = await query
             .OrderBy(a => a.EndTime)
             .Select(a => new AuctionListViewModel
             {
@@ -38,6 +50,10 @@ public class AuctionsController : Controller
                 IsActive = a.IsActive
             })
             .ToListAsync();
+
+        ViewBag.Categories = await GetCategoriesAsync();
+        ViewBag.CurrentSearch = searchTerm;
+        ViewBag.CurrentCategory = categoryId;
 
         return View(auctions);
     }
