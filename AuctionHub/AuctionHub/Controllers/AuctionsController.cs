@@ -139,6 +139,56 @@ public class AuctionsController : Controller
     }
 
     [HttpGet]
+    public async Task<IActionResult> MyAuctions()
+    {
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var auctions = await _context.Auctions
+            .Include(a => a.Category)
+            .Where(a => a.SellerId == currentUserId)
+            .OrderByDescending(a => a.CreatedOn)
+            .Select(a => new AuctionListViewModel
+            {
+                Id = a.Id,
+                Title = a.Title,
+                ImageUrl = a.ImageUrl,
+                CurrentPrice = a.CurrentPrice,
+                EndTime = a.EndTime,
+                Category = a.Category.Name,
+                IsActive = a.IsActive
+            })
+            .ToListAsync();
+
+        return View(auctions);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> MyBids()
+    {
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        // Get auctions where the user has placed at least one bid
+        var auctions = await _context.Bids
+            .Where(b => b.BidderId == currentUserId)
+            .Select(b => b.Auction)
+            .Distinct()
+            .Include(a => a.Category)
+            .Select(a => new AuctionListViewModel
+            {
+                Id = a.Id,
+                Title = a.Title,
+                ImageUrl = a.ImageUrl,
+                CurrentPrice = a.CurrentPrice,
+                EndTime = a.EndTime,
+                Category = a.Category.Name,
+                IsActive = a.IsActive
+            })
+            .ToListAsync();
+
+        return View(auctions);
+    }
+
+    [HttpGet]
     public async Task<IActionResult> Create()
     {
         var model = new AuctionFormModel
