@@ -86,6 +86,58 @@ public class AuctionsController : Controller
         return View(model);
     }
 
+    [HttpPost]
+    public async Task<IActionResult> PlaceBid(int auctionId, decimal amount)
+    {
+        var auction = await _context.Auctions
+            .Include(a => a.Bids)
+            .FirstOrDefaultAsync(a => a.Id == auctionId);
+
+        if (auction == null)
+        {
+            return NotFound();
+        }
+
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        // Validations
+        if (auction.SellerId == currentUserId)
+        {
+            TempData["Error"] = "You cannot bid on your own auction.";
+            return RedirectToAction(nameof(Details), new { id = auctionId });
+        }
+
+        if (auction.EndTime <= DateTime.Now || !auction.IsActive)
+        {
+            TempData["Error"] = "This auction has already ended.";
+            return RedirectToAction(nameof(Details), new { id = auctionId });
+        }
+
+        if (amount <= auction.CurrentPrice)
+        {
+            TempData["Error"] = $"Your bid must be higher than {auction.CurrentPrice:C}.";
+            return RedirectToAction(nameof(Details), new { id = auctionId });
+        }
+
+        // Create the bid
+        var bid = new Bid
+        {
+            AuctionId = auctionId,
+            BidderId = currentUserId!,
+            Amount = amount,
+            BidTime = DateTime.Now
+        };
+
+        // Update auction current price
+        auction.CurrentPrice = amount;
+
+        _context.Bids.Add(bid);
+        await _context.SaveChangesAsync();
+
+        TempData["Success"] = "Your bid was placed successfully!";
+        return RedirectToAction(nameof(Details), new { id = auctionId });
+    }
+
     [HttpGet]
     public async Task<IActionResult> Create()
     {
