@@ -25,7 +25,13 @@
                     @if (User.Identity?.IsAuthenticated ?? false)
                     {
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Auctions" asp-action="Create">Sell Item</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Auctions" asp-action="MyAuctions">My Auctions</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Auctions" asp-action="MyBids">My Bids</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Auctions" asp-action="Create">Sell Item</a>
                         </li>
                     }
                     <li class="nav-item">
