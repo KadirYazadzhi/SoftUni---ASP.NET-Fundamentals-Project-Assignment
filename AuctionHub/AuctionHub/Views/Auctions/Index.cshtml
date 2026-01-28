@@ -9,6 +9,26 @@
     <p class="lead">Find your next treasure or <a asp-action="Create">start selling today</a>.</p>
 </div>
 
+<!-- Search and Filter -->
+<div class="row mb-4 justify-content-center">
+    <div class="col-md-10">
+        <form asp-action="Index" method="get" class="row g-2 shadow-sm p-3 bg-white rounded border">
+            <div class="col-md-5">
+                <input type="text" name="searchTerm" class="form-control" placeholder="Search by title or description..." value="@ViewBag.CurrentSearch">
+            </div>
+            <div class="col-md-4">
+                <select name="categoryId" class="form-select" asp-items="ViewBag.Categories">
+                    <option value="">All Categories</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-grid gap-2 d-md-flex">
+                <button type="submit" class="btn btn-primary flex-grow-1">Search</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Clear</a>
+            </div>
+        </form>
+    </div>
+</div>
+
 @if (!Model.Any())
 {
     <div class="alert alert-info text-center">
