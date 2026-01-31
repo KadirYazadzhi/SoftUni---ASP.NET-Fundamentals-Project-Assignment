@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
@@ -14,59 +14,118 @@
         })();
     </script>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 <header>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom mb-3 sticky-top">
+    <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
-            <a class="navbar-brand fw-bold fs-3" asp-area="" asp-controller="Home" asp-action="Index">
-                <span class="text-primary">Auction</span>Hub
+            <a class="navbar-brand text-primary" asp-controller="Home" asp-action="Index">
+                <i class="bi bi-hammer me-2"></i>AuctionHub
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1 mx-lg-4">
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="Auctions" asp-action="Index">Explore</a>
                     </li>
                     @if (User.Identity?.IsAuthenticated ?? false)
                     {
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Auctions" asp-action="MyAuctions">My Items</a>
+                            <a class="nav-link" asp-controller="Auctions" asp-action="MyAuctions">Selling</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Auctions" asp-action="MyBids">My Bids</a>
+                            <a class="nav-link" asp-controller="Auctions" asp-action="MyBids">Bidding</a>
                         </li>
                     }
                 </ul>
                 
-                <div class="d-flex align-items-center">
-                    <button class="btn btn-link nav-link me-3" id="themeToggler" type="button">
-                        <i class="bi bi-sun-fill d-none-dark" id="themeIcon"></i>
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn btn-link nav-link p-0" id="themeToggler" type="button">
+                        <i class="bi bi-sun-fill fs-5" id="themeIcon"></i>
                     </button>
+                    
                     @if (User.Identity?.IsAuthenticated ?? false)
                     {
-                        <a class="btn btn-primary btn-sm rounded-pill px-4 me-3" asp-controller="Auctions" asp-action="Create">
-                            <i class="bi bi-plus-lg me-1"></i> List Item
+                        <a class="btn btn-primary rounded-pill px-4" asp-controller="Auctions" asp-action="Create">
+                            <i class="bi bi-plus-lg me-1"></i> Sell Item
                         </a>
+                        <partial name="_LoginPartial" />
                     }
-                    <partial name="_LoginPartial" />
+                    else
+                    {
+                        <div class="d-flex gap-2">
+                            <a class="btn btn-outline-primary rounded-pill px-4" asp-area="Identity" asp-page="/Account/Login">Log In</a>
+                            <a class="btn btn-primary rounded-pill px-4" asp-area="Identity" asp-page="/Account/Register">Get Started</a>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
     </nav>
 </header>
-<div class="container">
-    <main role="main" class="pb-3">
-        @RenderBody()
-    </main>
-</div>
 
-<footer class="border-top footer text-muted">
+<!-- Spacer for fixed navbar -->
+<div style="height: 76px;"></div>
+
+<main role="main" class="flex-grow-1">
+    @RenderBody()
+</main>
+
+<footer>
     <div class="container">
-        &copy; 2026 - AuctionHub - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        <div class="row g-5">
+            <div class="col-lg-4">
+                <a class="footer-brand text-primary text-decoration-none" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-hammer me-2"></i>AuctionHub
+                </a>
+                <p class="text-muted-custom mb-4">
+                    The premium destination for unique treasures and rare finds. Join thousands of collectors and sellers today.
+                </p>
+                <div class="d-flex gap-3">
+                    <a href="#" class="btn btn-sm btn-outline-secondary rounded-circle"><i class="bi bi-twitter"></i></a>
+                    <a href="#" class="btn btn-sm btn-outline-secondary rounded-circle"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="btn btn-sm btn-outline-secondary rounded-circle"><i class="bi bi-instagram"></i></a>
+                </div>
+            </div>
+            
+            <div class="col-6 col-lg-2">
+                <h6 class="footer-heading">Platform</h6>
+                <a asp-controller="Auctions" asp-action="Index" class="footer-link">Browse Auctions</a>
+                <a asp-controller="Auctions" asp-action="Index" class="footer-link">Trending</a>
+                <a asp-controller="Auctions" asp-action="Create" class="footer-link">Sell an Item</a>
+            </div>
+            
+            <div class="col-6 col-lg-2">
+                <h6 class="footer-heading">Support</h6>
+                <a href="#" class="footer-link">Help Center</a>
+                <a href="#" class="footer-link">Trust & Safety</a>
+                <a href="#" class="footer-link">Selling Tips</a>
+            </div>
+            
+            <div class="col-lg-4">
+                <h6 class="footer-heading">Stay Updated</h6>
+                <p class="text-muted-custom small mb-3">Subscribe to our newsletter for the latest drops.</p>
+                <form class="d-flex gap-2">
+                    <input type="email" class="form-control" placeholder="Email address">
+                    <button class="btn btn-primary px-3" type="button">Go</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="border-top mt-5 pt-4 d-flex flex-column flex-md-row justify-content-between align-items-center">
+            <p class="text-muted-custom small mb-0">&copy; 2026 AuctionHub Inc. All rights reserved.</p>
+            <div class="d-flex gap-4 mt-3 mt-md-0">
+                <a asp-controller="Home" asp-action="Privacy" class="text-muted-custom small text-decoration-none">Privacy Policy</a>
+                <a href="#" class="text-muted-custom small text-decoration-none">Terms of Service</a>
+            </div>
+        </div>
     </div>
 </footer>
+
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>

@@ -1,77 +1,187 @@
 @{
-    ViewData["Title"] = "Experience Premium Auctions";
+    ViewData["Title"] = "Welcome";
 }
 
-<div class="container py-5">
-    <!-- Hero Section -->
-    <div class="hero-gradient mb-5 shadow-lg text-center d-flex flex-column align-items-center justify-content-center">
-        <h1 class="display-2 fw-bolder mb-3">Bid. Win. Own.</h1>
-        <p class="fs-4 mb-4 opacity-75 max-width-700">
-            The future of online auctions is here. Transparent, fast, and secure. 
-            Join thousands of collectors and find your next masterpiece.
-        </p>
-        <div class="d-flex gap-3">
-            <a asp-controller="Auctions" asp-action="Index" class="btn btn-light btn-lg px-5 rounded-pill fw-bold text-primary">Explore Marketplace</a>
-            @if (!(User.Identity?.IsAuthenticated ?? false))
-            {
-                <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-outline-light btn-lg px-5 rounded-pill fw-bold">Join Community</a>
-            }
+<!-- Hero Section -->
+<section class="hero-section text-center position-relative overflow-hidden">
+    <div class="container position-relative z-2">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <span class="badge bg-primary-subtle text-primary mb-3 px-3 py-2 rounded-pill">
+                    <i class="bi bi-stars me-1"></i> New: Vintage Collection Live
+                </span>
+                <h1 class="hero-title mb-4">
+                    Discover Extraordinary <br> <span class="text-primary">Items & Stories</span>
+                </h1>
+                <p class="hero-subtitle mx-auto mb-5">
+                    The premier marketplace for collectors and enthusiasts. 
+                    Bid on exclusive items, rare antiques, and modern treasures in real-time.
+                </p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a asp-controller="Auctions" asp-action="Index" class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-lg">
+                        Start Exploring
+                    </a>
+                    <a asp-controller="Auctions" asp-action="Create" class="btn btn-outline-primary btn-lg rounded-pill px-5 py-3 bg-white">
+                        Sell Item
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Floating Elements (Decorative) -->
+        <div class="d-none d-lg-block position-absolute top-50 start-0 translate-middle-y ms-5 opacity-50" style="z-index: -1;">
+            <div class="card p-3 shadow-soft transform-rotate-n6" style="width: 200px; transform: rotate(-6deg);">
+                <div class="bg-light rounded mb-2" style="height: 120px;"></div>
+                <small class="fw-bold">Vintage Camera</small>
+                <div class="text-primary fw-bold small">$450.00</div>
+            </div>
+        </div>
+        
+        <div class="d-none d-lg-block position-absolute top-50 end-0 translate-middle-y me-5 opacity-50" style="z-index: -1;">
+             <div class="card p-3 shadow-soft" style="width: 200px; transform: rotate(6deg);">
+                <div class="bg-light rounded mb-2" style="height: 120px;"></div>
+                <small class="fw-bold">Rare Coin 1890</small>
+                <div class="text-primary fw-bold small">$1,200.00</div>
+            </div>
         </div>
     </div>
+</section>
 
-    <!-- Stats Section -->
-    <div class="row g-4 mb-5 text-center">
-        <div class="col-md-4">
-            <div class="p-4 border rounded-4 bg-card shadow-sm h-100">
-                <h2 class="fw-bold text-primary mb-1">10k+</h2>
-                <p class="text-muted mb-0">Active Auctions</p>
+<!-- Stats Section -->
+<section class="py-5 border-bottom bg-white">
+    <div class="container">
+        <div class="row text-center g-4">
+            <div class="col-md-4">
+                <h2 class="fw-bold display-6 text-primary mb-0">10k+</h2>
+                <p class="text-muted">Active Auctions</p>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="p-4 border rounded-4 bg-card shadow-sm h-100">
-                <h2 class="fw-bold text-primary mb-1">$2.5M+</h2>
-                <p class="text-muted mb-0">Total Bid Volume</p>
+            <div class="col-md-4">
+                <h2 class="fw-bold display-6 text-primary mb-0">$2M+</h2>
+                <p class="text-muted">Daily Volume</p>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="p-4 border rounded-4 bg-card shadow-sm h-100">
-                <h2 class="fw-bold text-primary mb-1">50k+</h2>
-                <p class="text-muted mb-0">Verified Users</p>
+            <div class="col-md-4">
+                <h2 class="fw-bold display-6 text-primary mb-0">50k+</h2>
+                <p class="text-muted">Verified Users</p>
             </div>
         </div>
     </div>
+</section>
 
-    <!-- Features Section -->
-    <div class="row g-5 py-5">
-        <div class="col-md-4 feature-card">
-            <div class="feature-icon">
-                <i class="bi bi-shield-lock-fill fs-2"></i>
-            </div>
-            <h3 class="fw-bold">Secured Bidding</h3>
-            <p class="text-muted">Our advanced encryption and identity verification system ensures every bid is legitimate and every transaction is safe.</p>
+<!-- Categories Preview -->
+<section class="py-6 my-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold mb-3">Browse by Category</h2>
+            <p class="text-muted">Find exactly what you're looking for</p>
         </div>
-        <div class="col-md-4 feature-card">
-            <div class="feature-icon">
-                <i class="bi bi-lightning-charge-fill fs-2"></i>
+        
+        <div class="row g-4">
+            <!-- Electronics -->
+            <div class="col-6 col-md-3">
+                <a asp-controller="Auctions" asp-action="Index" asp-route-categoryId="1" class="card h-100 text-decoration-none border-0 shadow-soft bg-light text-center py-5">
+                    <div class="card-body">
+                        <i class="bi bi-laptop fs-1 text-primary mb-3 d-block"></i>
+                        <h5 class="fw-bold text-dark">Electronics</h5>
+                        <small class="text-muted">340+ items</small>
+                    </div>
+                </a>
             </div>
-            <h3 class="fw-bold">Real-time Feedback</h3>
-            <p class="text-muted">Stay ahead of the competition with instant notifications and real-time updates on your favorite listings.</p>
-        </div>
-        <div class="col-md-4 feature-card">
-            <div class="feature-icon">
-                <i class="bi bi-gem fs-2"></i>
+            
+            <!-- Art -->
+            <div class="col-6 col-md-3">
+                <a asp-controller="Auctions" asp-action="Index" asp-route-categoryId="2" class="card h-100 text-decoration-none border-0 shadow-soft bg-light text-center py-5">
+                    <div class="card-body">
+                        <i class="bi bi-palette fs-1 text-primary mb-3 d-block"></i>
+                        <h5 class="fw-bold text-dark">Art & Design</h5>
+                        <small class="text-muted">120+ items</small>
+                    </div>
+                </a>
             </div>
-            <h3 class="fw-bold">Premium Curation</h3>
-            <p class="text-muted">From rare antiques to the latest tech, our category-based system helps you find high-quality items effortlessly.</p>
+            
+            <!-- Antiques -->
+            <div class="col-6 col-md-3">
+                <a asp-controller="Auctions" asp-action="Index" asp-route-categoryId="3" class="card h-100 text-decoration-none border-0 shadow-soft bg-light text-center py-5">
+                    <div class="card-body">
+                        <i class="bi bi-hourglass-split fs-1 text-primary mb-3 d-block"></i>
+                        <h5 class="fw-bold text-dark">Antiques</h5>
+                        <small class="text-muted">85+ items</small>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- Vehicles -->
+            <div class="col-6 col-md-3">
+                <a asp-controller="Auctions" asp-action="Index" asp-route-categoryId="4" class="card h-100 text-decoration-none border-0 shadow-soft bg-light text-center py-5">
+                    <div class="card-body">
+                        <i class="bi bi-car-front fs-1 text-primary mb-3 d-block"></i>
+                        <h5 class="fw-bold text-dark">Vehicles</h5>
+                        <small class="text-muted">50+ items</small>
+                    </div>
+                </a>
+            </div>
         </div>
     </div>
+</section>
 
-    <!-- Call to Action -->
-    <div class="mt-5 p-5 bg-primary text-white rounded-5 shadow-lg d-flex align-items-center justify-content-between flex-wrap gap-4">
-        <div>
-            <h2 class="fw-bold mb-2">Ready to clear your attic?</h2>
-            <p class="mb-0 opacity-75">Start selling today and reach global buyers in minutes.</p>
+<!-- How It Works -->
+<section class="py-5 bg-white border-top">
+    <div class="container py-4">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <div class="p-5 bg-light rounded-xl">
+                     <i class="bi bi-shield-check display-1 text-primary opacity-25"></i>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <h2 class="fw-bold mb-4">How it works</h2>
+                
+                <div class="d-flex mb-4">
+                    <div class="flex-shrink-0">
+                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">1</div>
+                    </div>
+                    <div class="ms-3">
+                        <h5 class="fw-bold">Create an Account</h5>
+                        <p class="text-muted">Sign up in seconds and verify your identity to ensure a safe marketplace.</p>
+                    </div>
+                </div>
+                
+                <div class="d-flex mb-4">
+                    <div class="flex-shrink-0">
+                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">2</div>
+                    </div>
+                    <div class="ms-3">
+                        <h5 class="fw-bold">Place Your Bid</h5>
+                        <p class="text-muted">Find items you love and place a bid. We'll notify you if you're outbid.</p>
+                    </div>
+                </div>
+                
+                <div class="d-flex">
+                    <div class="flex-shrink-0">
+                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">3</div>
+                    </div>
+                    <div class="ms-3">
+                        <h5 class="fw-bold">Win & Pay Securely</h5>
+                        <p class="text-muted">If you win, pay securely through our escrow system and track your delivery.</p>
+                    </div>
+                </div>
+                
+            </div>
         </div>
-        <a asp-controller="Auctions" asp-action="Create" class="btn btn-light btn-lg rounded-pill fw-bold">Start Selling Now</a>
     </div>
-</div>
+</section>
+
+<!-- CTA -->
+<section class="py-5">
+    <div class="container">
+        <div class="bg-primary rounded-xl p-5 text-center text-white position-relative overflow-hidden">
+            <div class="position-relative z-2">
+                <h2 class="fw-bold mb-3">Ready to start selling?</h2>
+                <p class="lead mb-4 opacity-75">Join thousands of successful sellers on AuctionHub today.</p>
+                <a asp-controller="Auctions" asp-action="Create" class="btn btn-light text-primary fw-bold rounded-pill px-5 py-3">
+                    Create Listing
+                </a>
+            </div>
+            <div class="position-absolute top-0 start-0 w-100 h-100 bg-white opacity-10" style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 20px 20px;"></div>
+        </div>
+    </div>
+</section>
