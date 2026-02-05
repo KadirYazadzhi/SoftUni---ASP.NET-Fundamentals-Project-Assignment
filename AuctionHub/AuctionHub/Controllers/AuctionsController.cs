@@ -26,8 +26,12 @@ public class AuctionsController : Controller
 
     [AllowAnonymous]
     [HttpGet]
-    public async Task<IActionResult> Index(string? searchTerm, int? categoryId)
+    public async Task<IActionResult> Index(string? searchTerm, int? categoryId, string? sortOrder, int? pageNumber)
     {
+        ViewData["CurrentSort"] = sortOrder;
+        ViewData["CurrentSearch"] = searchTerm;
+        ViewData["CurrentCategory"] = categoryId;
+        
         var query = _context.Auctions
             .Include(a => a.Category)
             .Where(a => a.IsActive && a.EndTime > DateTime.UtcNow);
@@ -44,25 +48,32 @@ public class AuctionsController : Controller
             query = query.Where(a => a.CategoryId == categoryId.Value);
         }
 
-        var auctions = await query
-            .OrderBy(a => a.EndTime)
-            .Select(a => new AuctionListViewModel
-            {
-                Id = a.Id,
-                Title = a.Title,
-                ImageUrl = a.ImageUrl,
-                CurrentPrice = a.CurrentPrice,
-                EndTime = a.EndTime,
-                Category = a.Category.Name,
-                IsActive = a.IsActive
-            })
-            .ToListAsync();
+        // Sorting
+        query = sortOrder switch
+        {
+            "price_desc" => query.OrderByDescending(a => a.CurrentPrice),
+            "price_asc" => query.OrderBy(a => a.CurrentPrice),
+            "newest" => query.OrderByDescending(a => a.CreatedOn),
+            _ => query.OrderBy(a => a.EndTime) // Default: Ending soonest
+        };
 
-        ViewBag.Categories = await GetCategoriesAsync();
-        ViewBag.CurrentSearch = searchTerm;
-        ViewBag.CurrentCategory = categoryId;
+        var projectedQuery = query.Select(a => new AuctionListViewModel
+        {
+            Id = a.Id,
+            Title = a.Title,
+            ImageUrl = a.ImageUrl,
+            CurrentPrice = a.CurrentPrice,
+            EndTime = a.EndTime,
+            Category = a.Category.Name,
+            IsActive = a.IsActive
+        });
 
-        return View(auctions);
+        int pageSize = 9;
+        var paginatedAuctions = await PaginatedList<AuctionListViewModel>.CreateAsync(projectedQuery, pageNumber ?? 1, pageSize);
+
+        ViewBag.Categories = await GetCategoriesAsync(); // Keep this for the dropdown
+
+        return View(paginatedAuctions);
     }
 
     [AllowAnonymous]
@@ -180,24 +191,32 @@ public class AuctionsController : Controller
     {
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        var auctions = await _context.Bids
-            .Where(b => b.BidderId == currentUserId)
-            .Select(b => b.Auction)
-            .Distinct()
+        var myBids = _context.Bids.Where(b => b.BidderId == currentUserId);
+        
+        var auctionsQuery = _context.Auctions
             .Include(a => a.Category)
-            .Select(a => new AuctionListViewModel
-            {
-                Id = a.Id,
-                Title = a.Title,
-                ImageUrl = a.ImageUrl,
-                CurrentPrice = a.CurrentPrice,
-                EndTime = a.EndTime,
-                Category = a.Category.Name,
-                IsActive = a.IsActive
-            })
-            .ToListAsync();
+            .Where(a => myBids.Any(b => b.AuctionId == a.Id));
 
-        return View(auctions);
+        var auctions = await auctionsQuery.ToListAsync();
+        
+        var myMaxBids = await myBids
+            .GroupBy(b => b.AuctionId)
+            .Select(g => new { AuctionId = g.Key, MaxAmount = g.Max(b => b.Amount) })
+            .ToDictionaryAsync(x => x.AuctionId, x => x.MaxAmount);
+
+        var model = auctions.Select(a => new AuctionListViewModel
+        {
+            Id = a.Id,
+            Title = a.Title,
+            ImageUrl = a.ImageUrl,
+            CurrentPrice = a.CurrentPrice,
+            EndTime = a.EndTime,
+            Category = a.Category.Name,
+            IsActive = a.IsActive,
+            IsWinning = myMaxBids.ContainsKey(a.Id) && myMaxBids[a.Id] >= a.CurrentPrice
+        }).OrderByDescending(a => a.EndTime).ToList();
+
+        return View(model);
     }
 
     [HttpGet]

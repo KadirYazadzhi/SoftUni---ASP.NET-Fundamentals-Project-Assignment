@@ -1,4 +1,4 @@
-@model IEnumerable<AuctionHub.Models.ViewModels.AuctionListViewModel>
+@model AuctionHub.Models.PaginatedList<AuctionHub.Models.ViewModels.AuctionListViewModel>
 
 @{
     ViewData["Title"] = "Active Auctions";
@@ -13,16 +13,24 @@
 <div class="row mb-4 justify-content-center">
     <div class="col-md-10">
         <form asp-action="Index" method="get" class="row g-2 shadow-sm p-3 bg-white rounded border">
-            <div class="col-md-5">
-                <input type="text" name="searchTerm" class="form-control" placeholder="Search by title or description..." value="@ViewBag.CurrentSearch">
-            </div>
             <div class="col-md-4">
+                <input type="text" name="searchTerm" class="form-control" placeholder="Search by title or description..." value="@ViewData["CurrentSearch"]">
+            </div>
+            <div class="col-md-3">
                 <select name="categoryId" class="form-select" asp-items="ViewBag.Categories">
                     <option value="">All Categories</option>
                 </select>
             </div>
-            <div class="col-md-3 d-grid gap-2 d-md-flex">
-                <button type="submit" class="btn btn-primary flex-grow-1">Search</button>
+             <div class="col-md-3">
+                <select name="sortOrder" class="form-select">
+                    <option value="">Ending Soonest</option>
+                    <option value="newest" selected="@((string)ViewData["CurrentSort"] == "newest")">Newest Listed</option>
+                    <option value="price_asc" selected="@((string)ViewData["CurrentSort"] == "price_asc")">Price: Low to High</option>
+                    <option value="price_desc" selected="@((string)ViewData["CurrentSort"] == "price_desc")">Price: High to Low</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-grid gap-2 d-md-flex">
+                <button type="submit" class="btn btn-primary flex-grow-1">Filter</button>
                 <a asp-action="Index" class="btn btn-outline-secondary">Clear</a>
             </div>
         </form>
@@ -32,7 +40,7 @@
 @if (!Model.Any())
 {
     <div class="alert alert-info text-center">
-        No active auctions found. Be the first to <a asp-action="Create">create one!</a>
+        No active auctions found matching your criteria. Be the first to <a asp-action="Create">create one!</a>
     </div>
 }
 else
@@ -42,5 +50,35 @@ else
         {
             <partial name="_AuctionCardPartial" model="auction" />
         }
+    </div>
+
+    <!-- Pagination -->
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+    
+    <div class="d-flex justify-content-center mt-5">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <li class="page-item @prevDisabled">
+                    <a class="page-link" asp-action="Index"
+                       asp-route-sortOrder="@ViewData["CurrentSort"]"
+                       asp-route-pageNumber="@(Model.PageIndex - 1)"
+                       asp-route-searchTerm="@ViewData["CurrentSearch"]"
+                       asp-route-categoryId="@ViewData["CurrentCategory"]">
+                        Previous
+                    </a>
+                </li>
+                <li class="page-item disabled"><span class="page-link">Page @Model.PageIndex of @Model.TotalPages</span></li>
+                <li class="page-item @nextDisabled">
+                    <a class="page-link" asp-action="Index"
+                       asp-route-sortOrder="@ViewData["CurrentSort"]"
+                       asp-route-pageNumber="@(Model.PageIndex + 1)"
+                       asp-route-searchTerm="@ViewData["CurrentSearch"]"
+                       asp-route-categoryId="@ViewData["CurrentCategory"]">
+                        Next
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
 }

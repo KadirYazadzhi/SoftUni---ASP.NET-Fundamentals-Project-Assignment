@@ -2,10 +2,25 @@
 
 <div class="col">
     <div class="card h-100 border-0 shadow-sm rounded-4 position-relative">
-        <div class="position-absolute top-0 start-0 m-3 z-1">
+        <div class="position-absolute top-0 start-0 m-3 z-1 d-flex flex-column gap-2">
             <span class="badge bg-white text-dark shadow-sm rounded-pill px-3 py-2">
                 <i class="bi bi-tag-fill text-primary me-1"></i> @Model.Category
             </span>
+            @if (Model.IsWinning.HasValue)
+            {
+                if (Model.IsWinning.Value)
+                {
+                    <span class="badge bg-success shadow-sm rounded-pill px-3 py-2">
+                        <i class="bi bi-trophy-fill me-1"></i> Winning
+                    </span>
+                }
+                else
+                {
+                    <span class="badge bg-danger shadow-sm rounded-pill px-3 py-2">
+                        <i class="bi bi-arrow-down-circle-fill me-1"></i> Outbid
+                    </span>
+                }
+            }
         </div>
         
         <div class="overflow-hidden rounded-top-4" style="height: 220px;">

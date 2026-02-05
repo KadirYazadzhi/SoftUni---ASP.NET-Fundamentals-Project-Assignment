@@ -9,6 +9,10 @@ public class AuctionListViewModel
     public DateTime EndTime { get; set; }
     public string Category { get; set; } = null!;
     public bool IsActive { get; set; }
+    
+    // Nullable because it's only relevant for logged-in users in specific contexts
+    public bool? IsWinning { get; set; }
+
     public string TimeRemaining => EndTime > DateTime.Now 
         ? $"{(EndTime - DateTime.Now).Days}d {(EndTime - DateTime.Now).Hours}h" 
         : "Expired";
