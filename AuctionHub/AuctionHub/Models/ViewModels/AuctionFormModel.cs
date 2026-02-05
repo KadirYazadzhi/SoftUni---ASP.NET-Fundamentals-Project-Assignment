@@ -30,6 +30,10 @@ public class AuctionFormModel
     [Display(Name = "Minimum Bid Increase")]
     public decimal MinIncrease { get; set; }
 
+    [Display(Name = "Buy It Now Price (Optional)")]
+    [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0.")]
+    public decimal? BuyItNowPrice { get; set; }
+
     [Required]
     [Display(Name = "Auction End Time")]
     public DateTime EndTime { get; set; }

@@ -85,6 +85,25 @@
                     </div>
                 </div>
 
+                <!-- Buy It Now Card -->
+                @if (User.Identity?.IsAuthenticated == true && Model.IsActive && Model.BuyItNowPrice.HasValue)
+                {
+                    <div class="card bg-success-subtle border-success mb-4">
+                        <div class="card-body p-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+                            <div>
+                                <h5 class="fw-bold text-success mb-1"><i class="bi bi-bag-check-fill me-2"></i>Buy It Now</h5>
+                                <p class="mb-0 text-success-emphasis">Purchase immediately for <strong>@Model.BuyItNowPrice.Value.ToString("C")</strong></p>
+                            </div>
+                            <form asp-action="BuyItNow" method="post" onsubmit="return confirm('Buy this item for @Model.BuyItNowPrice.Value.ToString("C")?');">
+                                <input type="hidden" name="auctionId" value="@Model.Id" />
+                                <button type="submit" class="btn btn-success btn-lg px-4 rounded-pill shadow-sm">
+                                    Buy Now
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                }
+
                 <!-- Bidding Card -->
                 @if (User.Identity?.IsAuthenticated == true)
                 {

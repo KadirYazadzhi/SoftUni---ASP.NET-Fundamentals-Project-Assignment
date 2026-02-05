@@ -29,6 +29,9 @@ public class Auction
     [Column(TypeName = "decimal(18,2)")]
     public decimal MinIncrease { get; set; }
 
+    [Column(TypeName = "decimal(18,2)")]
+    public decimal? BuyItNowPrice { get; set; }
+
     [Required]
     public DateTime CreatedOn { get; set; }
 

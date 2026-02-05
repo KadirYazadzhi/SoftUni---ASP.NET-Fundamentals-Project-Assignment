@@ -2,6 +2,7 @@ using System.Security.Claims;
 using AuctionHub.Data;
 using AuctionHub.Models;
 using AuctionHub.Models.ViewModels;
+using AuctionHub.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,11 +15,13 @@ public class AuctionsController : Controller
 {
     private readonly AuctionHubDbContext _context;
     private readonly IWebHostEnvironment _webHostEnvironment;
+    private readonly IAuctionService _auctionService;
 
-    public AuctionsController(AuctionHubDbContext context, IWebHostEnvironment webHostEnvironment)
+    public AuctionsController(AuctionHubDbContext context, IWebHostEnvironment webHostEnvironment, IAuctionService auctionService)
     {
         _context = context;
         _webHostEnvironment = webHostEnvironment;
+        _auctionService = auctionService;
     }
 
     [AllowAnonymous]
@@ -87,6 +90,7 @@ public class AuctionsController : Controller
             CurrentPrice = auction.CurrentPrice,
             StartPrice = auction.StartPrice,
             MinIncrease = auction.MinIncrease,
+            BuyItNowPrice = auction.BuyItNowPrice,
             EndTime = auction.EndTime,
             Category = auction.Category.Name,
             Seller = auction.Seller.UserName ?? auction.Seller.Email ?? "Unknown",
@@ -113,87 +117,38 @@ public class AuctionsController : Controller
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (currentUserId == null) return Challenge();
 
-        using var transaction = await _context.Database.BeginTransactionAsync();
+        var result = await _auctionService.PlaceBidAsync(auctionId, currentUserId, amount);
 
-        try
+        if (result.Success)
         {
-            var auction = await _context.Auctions
-                .Include(a => a.Bids)
-                .ThenInclude(b => b.Bidder)
-                .FirstOrDefaultAsync(a => a.Id == auctionId);
-
-            if (auction == null) return NotFound();
-
-            if (auction.SellerId == currentUserId)
-            {
-                TempData["Error"] = "You cannot bid on your own auction.";
-                return RedirectToAction(nameof(Details), new { id = auctionId });
-            }
-
-            if (auction.EndTime <= DateTime.UtcNow || !auction.IsActive)
-            {
-                TempData["Error"] = "This auction has already ended.";
-                return RedirectToAction(nameof(Details), new { id = auctionId });
-            }
-
-            if (amount < auction.CurrentPrice + auction.MinIncrease)
-            {
-                TempData["Error"] = $"Your bid must be at least {auction.CurrentPrice + auction.MinIncrease:C}.";
-                return RedirectToAction(nameof(Details), new { id = auctionId });
-            }
-
-            var currentUser = await _context.Users.FindAsync(currentUserId);
-            if (currentUser == null || currentUser.WalletBalance < amount)
-            {
-                TempData["Error"] = "Insufficient funds in your wallet.";
-                return RedirectToAction(nameof(Details), new { id = auctionId });
-            }
-
-            currentUser.WalletBalance -= amount;
-
-            var previousHighBid = auction.Bids.OrderByDescending(b => b.Amount).FirstOrDefault();
-            if (previousHighBid != null)
-            {
-                if (previousHighBid.BidderId == currentUserId)
-                {
-                    currentUser.WalletBalance += previousHighBid.Amount;
-                }
-                else
-                {
-                    var previousBidder = previousHighBid.Bidder; 
-                    previousBidder.WalletBalance += previousHighBid.Amount;
-                }
-            }
-
-            var bid = new Bid
-            {
-                AuctionId = auctionId,
-                BidderId = currentUserId,
-                Amount = amount,
-                BidTime = DateTime.UtcNow
-            };
-
-            auction.CurrentPrice = amount;
-            auction.Bids.Add(bid);
-
-            await _context.SaveChangesAsync();
-            await transaction.CommitAsync();
-
-            TempData["Success"] = "Your bid was placed successfully!";
-            return RedirectToAction(nameof(Details), new { id = auctionId });
+            TempData["Success"] = result.Message;
         }
-        catch (DbUpdateConcurrencyException)
+        else
         {
-            await transaction.RollbackAsync();
-            TempData["Error"] = "Someone else placed a bid just now. Please review the new price and try again.";
-            return RedirectToAction(nameof(Details), new { id = auctionId });
+            TempData["Error"] = result.Message;
         }
-        catch (Exception)
+
+        return RedirectToAction(nameof(Details), new { id = auctionId });
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> BuyItNow(int auctionId)
+    {
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (currentUserId == null) return Challenge();
+
+        var result = await _auctionService.BuyItNowAsync(auctionId, currentUserId);
+
+        if (result.Success)
         {
-            await transaction.RollbackAsync();
-            TempData["Error"] = "An error occurred while placing your bid. Please try again.";
-            return RedirectToAction(nameof(Details), new { id = auctionId });
+            TempData["Success"] = result.Message;
         }
+        else
+        {
+            TempData["Error"] = result.Message;
+        }
+
+        return RedirectToAction(nameof(Details), new { id = auctionId });
     }
 
     [HttpGet]
@@ -270,6 +225,7 @@ public class AuctionsController : Controller
             ImageUrl = auction.ImageUrl,
             StartPrice = auction.StartPrice,
             MinIncrease = auction.MinIncrease,
+            BuyItNowPrice = auction.BuyItNowPrice,
             EndTime = auction.EndTime,
             CategoryId = auction.CategoryId,
             Categories = await GetCategoriesAsync()
@@ -317,6 +273,7 @@ public class AuctionsController : Controller
         
         auction.StartPrice = model.StartPrice;
         auction.MinIncrease = model.MinIncrease;
+        auction.BuyItNowPrice = model.BuyItNowPrice;
         auction.EndTime = model.EndTime;
         auction.CategoryId = model.CategoryId;
 
@@ -394,6 +351,7 @@ public class AuctionsController : Controller
             StartPrice = model.StartPrice,
             CurrentPrice = model.StartPrice,
             MinIncrease = model.MinIncrease,
+            BuyItNowPrice = model.BuyItNowPrice,
             EndTime = model.EndTime,
             CreatedOn = DateTime.UtcNow,
             IsActive = true,
