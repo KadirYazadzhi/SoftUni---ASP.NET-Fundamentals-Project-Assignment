@@ -71,7 +71,7 @@ public class AuctionsController : Controller
         int pageSize = 9;
         var paginatedAuctions = await PaginatedList<AuctionListViewModel>.CreateAsync(projectedQuery, pageNumber ?? 1, pageSize);
 
-        ViewBag.Categories = await GetCategoriesAsync(); // Keep this for the dropdown
+        ViewBag.Categories = await GetCategoriesAsync(); 
 
         return View(paginatedAuctions);
     }
@@ -271,6 +271,8 @@ public class AuctionsController : Controller
              return RedirectToAction(nameof(Details), new { id = id });
         }
 
+        ValidateImage(model.ImageFile);
+
         if (!ModelState.IsValid)
         {
             model.Categories = await GetCategoriesAsync();
@@ -280,6 +282,9 @@ public class AuctionsController : Controller
         string? imagePath = model.ImageUrl;
         if (model.ImageFile != null)
         {
+            // Delete old
+            DeleteImage(auction.ImageUrl);
+            // Save new
             imagePath = await SaveImageAsync(model.ImageFile);
         }
 
@@ -319,6 +324,8 @@ public class AuctionsController : Controller
             return RedirectToAction(nameof(Details), new { id = id });
         }
 
+        DeleteImage(auction.ImageUrl);
+
         _context.Auctions.Remove(auction);
         await _context.SaveChangesAsync();
 
@@ -343,6 +350,8 @@ public class AuctionsController : Controller
     [HttpPost]
     public async Task<IActionResult> Create(AuctionFormModel model)
     {
+        ValidateImage(model.ImageFile);
+
         string? imagePath = model.ImageUrl;
         if (model.ImageFile != null)
         {
@@ -356,6 +365,10 @@ public class AuctionsController : Controller
 
         if (!ModelState.IsValid)
         {
+            // If upload happened but state is invalid, should we delete the uploaded file? 
+            // In a real app yes, here we skip for simplicity or do it.
+            DeleteImage(imagePath);
+            
             model.Categories = await GetCategoriesAsync();
             return View(model);
         }
@@ -384,6 +397,23 @@ public class AuctionsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    private void ValidateImage(IFormFile? file)
+    {
+        if (file == null) return;
+
+        if (file.Length > 5 * 1024 * 1024)
+        {
+            ModelState.AddModelError("ImageFile", "File size must be less than 5MB.");
+        }
+
+        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+        var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+        if (!allowedExtensions.Contains(extension))
+        {
+            ModelState.AddModelError("ImageFile", "Invalid file type. Allowed: jpg, jpeg, png, gif, webp.");
+        }
+    }
+
     private async Task<string> SaveImageAsync(IFormFile file)
     {
         string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "auctions");
@@ -398,6 +428,32 @@ public class AuctionsController : Controller
         }
         
         return "/images/auctions/" + uniqueFileName;
+    }
+
+    private void DeleteImage(string? imageUrl)
+    {
+        if (string.IsNullOrEmpty(imageUrl)) return;
+        
+        // Check if it's a local file (starts with our path)
+        if (imageUrl.StartsWith("/images/auctions/"))
+        {
+            // Convert web path to file path
+            // Remove leading slash, replace / with system separator
+            var relativePath = imageUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
+            var filePath = Path.Combine(_webHostEnvironment.WebRootPath, relativePath);
+            
+            if (System.IO.File.Exists(filePath))
+            {
+                try
+                {
+                    System.IO.File.Delete(filePath);
+                }
+                catch
+                {
+                    // Log error or ignore
+                }
+            }
+        }
     }
 
     private async Task<IEnumerable<SelectListItem>> GetCategoriesAsync()

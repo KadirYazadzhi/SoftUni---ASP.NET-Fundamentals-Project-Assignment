@@ -23,6 +23,7 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => {
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequiredLength = 3;
 })
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AuctionHubDbContext>();
 
 builder.Services.AddControllersWithViews();
@@ -56,7 +57,7 @@ using (var scope = app.Services.CreateScope())
     var context = services.GetRequiredService<AuctionHubDbContext>();
     // Automatic migration for development
     context.Database.Migrate();
-    await DbSeeder.SeedAsync(context);
+    await DbSeeder.SeedAsync(services);
 }
 
 app.Run();
