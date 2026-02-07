@@ -4,65 +4,133 @@
     var transactions = ViewBag.Transactions as List<Transaction>;
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card bg-white text-dark border-0 shadow-sm mb-4">
-            <div class="card-body p-5 text-center">
-                <h6 class="text-uppercase text-muted letter-spacing-2 mb-3">Current Balance</h6>
-                <h1 class="display-4 fw-bold text-primary mb-4">@Model.WalletBalance.ToString("C")</h1>
-                
-                <button type="button" class="btn btn-primary btn-lg px-5 rounded-pill shadow-sm" data-bs-toggle="modal" data-bs-target="#addFundsModal">
-                    <i class="bi bi-plus-lg me-2"></i>Add Funds
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4 animate-fade-up">
+                <div>
+                    <h2 class="fw-bold mb-1"><i class="bi bi-wallet2 text-primary me-2"></i>My Wallet</h2>
+                    <p class="text-muted">Manage your funds and track your bidding activity.</p>
+                </div>
+                <button type="button" class="btn btn-primary rounded-pill px-4 py-2 shadow-sm hover-lift" data-bs-toggle="modal" data-bs-target="#addFundsModal">
+                    <i class="bi bi-plus-lg me-1"></i> Add Funds
                 </button>
             </div>
-        </div>
 
-        <h4 class="mb-3">Transaction History</h4>
-        <div class="card bg-white text-dark border-0 shadow-sm">
-            <div class="card-body p-0">
-                @if (transactions != null && transactions.Any())
-                {
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="bg-light">
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Description</th>
-                                    <th>Type</th>
-                                    <th class="text-end">Amount</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var t in transactions)
-                                {
-                                    <tr>
-                                        <td>@t.TransactionDate.ToLocalTime().ToString("g")</td>
-                                        <td>@t.Description</td>
-                                        <td>
-                                            @if(t.TransactionType == "Deposit" || t.TransactionType == "Refund" || t.TransactionType == "Sale")
-                                            {
-                                                <span class="badge bg-success bg-opacity-10 text-success">@t.TransactionType</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge bg-danger bg-opacity-10 text-danger">@t.TransactionType</span>
-                                            }
-                                        </td>
-                                        <td class="text-end fw-bold @(t.TransactionType == "Deposit" || t.TransactionType == "Refund" || t.TransactionType == "Sale" ? "text-success" : "text-danger")">
-                                            @t.Amount.ToString("C")
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
+            <div class="row g-4 mb-5">
+                <!-- Balance Card -->
+                <div class="col-md-5 animate-fade-up delay-100">
+                    <div class="card border-0 shadow-lg rounded-5 overflow-hidden h-100" style="background: linear-gradient(135deg, var(--bs-primary) 0%, #4361ee 100%);">
+                        <div class="card-body p-5 text-white position-relative">
+                            <div class="position-absolute top-0 end-0 m-4 opacity-25">
+                                <i class="bi bi-bank fs-1"></i>
+                            </div>
+                            <h6 class="text-uppercase opacity-75 letter-spacing-2 mb-3">Available Balance</h6>
+                            <h1 class="display-3 fw-bolder mb-0">@Model.WalletBalance.ToString("C")</h1>
+                            <div class="mt-4 pt-4 border-top border-white border-opacity-10">
+                                <div class="d-flex align-items-center small">
+                                    <i class="bi bi-shield-check me-2"></i> Secured by AuctionHub Escrow
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                }
-                else
-                {
-                    <div class="p-4 text-center text-muted">
-                        No transactions found.
+                </div>
+
+                <!-- Stats Summary -->
+                <div class="col-md-7 animate-fade-up delay-200">
+                    <div class="card border-0 shadow-sm rounded-5 bg-white h-100">
+                        <div class="card-body p-4">
+                            <h6 class="fw-bold text-muted text-uppercase small mb-4">Quick Insights</h6>
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <div class="p-3 bg-light rounded-4">
+                                        <div class="text-muted small mb-1">Total Deposits</div>
+                                        <div class="h4 fw-bold text-success mb-0">+@transactions?.Where(t => t.TransactionType == "Deposit").Sum(t => t.Amount).ToString("C")</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-3 bg-light rounded-4">
+                                        <div class="text-muted small mb-1">Active Bids</div>
+                                        <div class="h4 fw-bold text-primary mb-0">@transactions?.Where(t => t.TransactionType == "Bid").Count()</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-3 bg-light rounded-4">
+                                        <div class="text-muted small mb-1">Spent on Bids</div>
+                                        <div class="h4 fw-bold text-danger mb-0">-@transactions?.Where(t => t.TransactionType == "Bid" || t.TransactionType == "Purchase").Sum(t => t.Amount).ToString("C")</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-3 bg-light rounded-4">
+                                        <div class="text-muted small mb-1">Refunds Received</div>
+                                        <div class="h4 fw-bold text-info mb-0">@transactions?.Where(t => t.TransactionType == "Refund").Sum(t => t.Amount).ToString("C")</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                }
+                </div>
+            </div>
+
+            <!-- Transaction History -->
+            <div class="animate-fade-up delay-300">
+                <h4 class="fw-bold mb-4">Recent Transactions</h4>
+                <div class="card border-0 shadow-sm rounded-5 bg-white overflow-hidden">
+                    <div class="card-body p-0">
+                        @if (transactions != null && transactions.Any())
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th class="ps-4 border-0 py-3">Transaction</th>
+                                            <th class="border-0 py-3">Type</th>
+                                            <th class="border-0 py-3">Date</th>
+                                            <th class="text-end pe-4 border-0 py-3">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="border-top-0">
+                                        @foreach (var t in transactions)
+                                        {
+                                            <tr>
+                                                <td class="ps-4 py-3">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="icon-box-sm rounded-circle @(t.Amount > 0 ? "bg-success-subtle text-success" : "bg-danger-subtle text-danger") me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                            <i class="bi @(t.TransactionType == "Deposit" ? "bi-plus-circle" : t.TransactionType == "Refund" ? "bi-arrow-left-circle" : "bi-dash-circle")"></i>
+                                                        </div>
+                                                        <span class="fw-bold">@t.Description</span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    @switch (t.TransactionType)
+                                                    {
+                                                        case "Deposit": <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">Deposit</span> break;
+                                                        case "Refund": <span class="badge bg-info bg-opacity-10 text-info rounded-pill px-3">Refund</span> break;
+                                                        case "Bid": <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3">Bid</span> break;
+                                                        case "Purchase": <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3">Purchase</span> break;
+                                                        default: <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-3">@t.TransactionType</span> break;
+                                                    }
+                                                </td>
+                                                <td class="text-muted small">@t.TransactionDate.ToLocalTime().ToString("MMM dd, yyyy HH:mm")</td>
+                                                <td class="text-end pe-4 fw-bold @(t.Amount > 0 || t.TransactionType == "Refund" ? "text-success" : "text-danger")">
+                                                    @(t.Amount > 0 || t.TransactionType == "Refund" ? "+" : "-")@t.Amount.ToString("C")
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="p-5 text-center">
+                                <i class="bi bi-clock-history display-4 text-muted opacity-25 mb-3 d-block"></i>
+                                <p class="text-muted mb-0">No transactions recorded yet.</p>
+                            </div>
+                        }
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -71,22 +139,26 @@
 <!-- Modal -->
 <div class="modal fade" id="addFundsModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header border-0 pb-0">
+        <div class="modal-content border-0 shadow-lg rounded-5 overflow-hidden">
+            <div class="modal-header border-0 bg-primary text-white p-4">
                 <h5 class="modal-title fw-bold">Add Funds to Wallet</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body pt-4">
+            <div class="modal-body p-4 p-lg-5">
                 <form asp-action="AddFunds" method="post">
+                    <div class="text-center mb-4">
+                        <i class="bi bi-cash-coin display-4 text-primary opacity-25"></i>
+                        <p class="text-muted mt-2">Enter the amount you wish to add to your balance.</p>
+                    </div>
                     <div class="mb-4">
-                        <label class="form-label text-muted small text-uppercase">Amount</label>
+                        <label class="form-label text-muted small text-uppercase fw-bold">Deposit Amount</label>
                         <div class="input-group input-group-lg">
-                            <span class="input-group-text border-end-0 bg-light text-muted">$</span>
-                            <input type="number" name="amount" class="form-control border-start-0 bg-light" placeholder="0.00" step="0.01" min="0.01" required>
+                            <span class="input-group-text border-end-0 bg-light text-muted rounded-start-pill ps-3">$</span>
+                            <input type="number" name="amount" class="form-control border-start-0 bg-light rounded-end-pill" placeholder="0.00" step="0.01" min="0.01" required autofocus>
                         </div>
                     </div>
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-primary btn-lg">Confirm Deposit</button>
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-sm">Confirm Deposit</button>
                     </div>
                 </form>
             </div>
