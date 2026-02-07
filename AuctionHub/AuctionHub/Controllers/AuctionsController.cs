@@ -195,48 +195,120 @@ public class AuctionsController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> MyAuctions()
+    public async Task<IActionResult> MyAuctions(string? searchTerm, int? categoryId, string? sortOrder, int? pageNumber, decimal? minPrice, decimal? maxPrice, string? status)
     {
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        
+        ViewData["CurrentSort"] = sortOrder;
+        ViewData["CurrentSearch"] = searchTerm;
+        ViewData["CurrentCategory"] = categoryId;
+        ViewData["MinPrice"] = minPrice;
+        ViewData["MaxPrice"] = maxPrice;
+        ViewData["Status"] = status;
 
-        var auctions = await _context.Auctions
+        var query = _context.Auctions
             .Include(a => a.Category)
-            .Where(a => a.SellerId == currentUserId)
-            .OrderByDescending(a => a.CreatedOn)
-            .Select(a => new AuctionListViewModel
-            {
-                Id = a.Id,
-                Title = a.Title,
-                ImageUrl = a.ImageUrl,
-                CurrentPrice = a.CurrentPrice,
-                EndTime = a.EndTime,
-                Category = a.Category.Name,
-                IsActive = a.IsActive
-            })
-            .ToListAsync();
+            .Where(a => a.SellerId == currentUserId);
 
-        return View(auctions);
+        // Status Filtering
+        if (!string.IsNullOrEmpty(status))
+        {
+            if (status == "active") query = query.Where(a => a.IsActive && a.EndTime > DateTime.UtcNow);
+            else if (status == "closed") query = query.Where(a => !a.IsActive || a.EndTime <= DateTime.UtcNow);
+        }
+
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            var normalizedSearch = searchTerm.ToLower();
+            query = query.Where(a => a.Title.ToLower().Contains(normalizedSearch) || 
+                             a.Description.ToLower().Contains(normalizedSearch));
+        }
+
+        if (categoryId.HasValue)
+        {
+            query = query.Where(a => a.CategoryId == categoryId.Value);
+        }
+
+        if (minPrice.HasValue) query = query.Where(a => a.CurrentPrice >= minPrice.Value);
+        if (maxPrice.HasValue) query = query.Where(a => a.CurrentPrice <= maxPrice.Value);
+
+        // Sorting
+        query = sortOrder switch
+        {
+            "price_desc" => query.OrderByDescending(a => a.CurrentPrice),
+            "price_asc" => query.OrderBy(a => a.CurrentPrice),
+            "oldest" => query.OrderBy(a => a.CreatedOn),
+            _ => query.OrderByDescending(a => a.CreatedOn)
+        };
+
+        var projectedQuery = query.Select(a => new AuctionListViewModel
+        {
+            Id = a.Id,
+            Title = a.Title,
+            ImageUrl = a.ImageUrl,
+            CurrentPrice = a.CurrentPrice,
+            EndTime = a.EndTime,
+            Category = a.Category.Name,
+            IsActive = a.IsActive
+        });
+
+        int pageSize = 6;
+        var paginated = await PaginatedList<AuctionListViewModel>.CreateAsync(projectedQuery, pageNumber ?? 1, pageSize);
+        ViewBag.Categories = await GetCategoriesAsync();
+
+        return View(paginated);
     }
 
     [HttpGet]
-    public async Task<IActionResult> MyBids()
+    public async Task<IActionResult> MyBids(string? searchTerm, int? categoryId, string? sortOrder, int? pageNumber, decimal? minPrice, decimal? maxPrice, string? status)
     {
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        
+        ViewData["CurrentSort"] = sortOrder;
+        ViewData["CurrentSearch"] = searchTerm;
+        ViewData["CurrentCategory"] = categoryId;
+        ViewData["MinPrice"] = minPrice;
+        ViewData["MaxPrice"] = maxPrice;
+        ViewData["Status"] = status;
 
         var myBids = _context.Bids.Where(b => b.BidderId == currentUserId);
         
-        var auctionsQuery = _context.Auctions
+        var query = _context.Auctions
             .Include(a => a.Category)
             .Where(a => myBids.Any(b => b.AuctionId == a.Id));
 
-        var auctions = await auctionsQuery.ToListAsync();
-        
+        // Filtering
+        if (!string.IsNullOrEmpty(status))
+        {
+            if (status == "active") query = query.Where(a => a.IsActive && a.EndTime > DateTime.UtcNow);
+            else if (status == "closed") query = query.Where(a => !a.IsActive || a.EndTime <= DateTime.UtcNow);
+        }
+
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            var normalizedSearch = searchTerm.ToLower();
+            query = query.Where(a => a.Title.ToLower().Contains(normalizedSearch) || 
+                             a.Description.ToLower().Contains(normalizedSearch));
+        }
+
+        if (categoryId.HasValue) query = query.Where(a => a.CategoryId == categoryId.Value);
+        if (minPrice.HasValue) query = query.Where(a => a.CurrentPrice >= minPrice.Value);
+        if (maxPrice.HasValue) query = query.Where(a => a.CurrentPrice <= maxPrice.Value);
+
+        // Sorting
+        query = sortOrder switch
+        {
+            "price_desc" => query.OrderByDescending(a => a.CurrentPrice),
+            "price_asc" => query.OrderBy(a => a.CurrentPrice),
+            _ => query.OrderByDescending(a => a.EndTime)
+        };
+
         var myMaxBids = await myBids
             .GroupBy(b => b.AuctionId)
             .Select(g => new { AuctionId = g.Key, MaxAmount = g.Max(b => b.Amount) })
             .ToDictionaryAsync(x => x.AuctionId, x => x.MaxAmount);
 
-        var model = auctions.Select(a => new AuctionListViewModel
+        var projectedQuery = query.Select(a => new AuctionListViewModel
         {
             Id = a.Id,
             Title = a.Title,
@@ -246,9 +318,13 @@ public class AuctionsController : Controller
             Category = a.Category.Name,
             IsActive = a.IsActive,
             IsWinning = myMaxBids.ContainsKey(a.Id) && myMaxBids[a.Id] >= a.CurrentPrice
-        }).OrderByDescending(a => a.EndTime).ToList();
+        });
 
-        return View(model);
+        int pageSize = 6;
+        var paginated = await PaginatedList<AuctionListViewModel>.CreateAsync(projectedQuery, pageNumber ?? 1, pageSize);
+        ViewBag.Categories = await GetCategoriesAsync();
+
+        return View(paginated);
     }
 
     [HttpGet]
