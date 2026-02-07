@@ -1,0 +1,57 @@
+@using AuctionHub.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@{
+    var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+}
+<ul class="nav nav-pills flex-column profile-nav">
+    <li class="nav-item">
+        <a class="nav-link rounded-0 border-bottom p-3 @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index">
+            <i class="bi bi-person me-2"></i> Profile
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link rounded-0 border-bottom p-3 @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email">
+            <i class="bi bi-envelope me-2"></i> Email
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link rounded-0 border-bottom p-3 @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword">
+            <i class="bi bi-key me-2"></i> Password
+        </a>
+    </li>
+    @if (hasExternalLogins)
+    {
+        <li id="external-logins" class="nav-item">
+            <a id="external-login" class="nav-link rounded-0 border-bottom p-3 @ManageNavPages.ExternalLoginsNavClass(ViewContext)" asp-page="./ExternalLogins">
+                <i class="bi bi-share me-2"></i> External Logins
+            </a>
+        </li>
+    }
+    <li class="nav-item">
+        <a class="nav-link rounded-0 border-bottom p-3 @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)" id="two-factor" asp-page="./TwoFactorAuthentication">
+            <i class="bi bi-shield-check me-2"></i> 2FA
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link rounded-0 p-3 @ManageNavPages.PersonalDataNavClass(ViewContext)" id="personal-data" asp-page="./PersonalData">
+            <i class="bi bi-trash me-2"></i> Personal Data
+        </a>
+    </li>
+</ul>
+
+<style>
+    .profile-nav .nav-link {
+        color: var(--bs-body-color);
+        transition: all 0.2s;
+    }
+    .profile-nav .nav-link:hover {
+        background-color: rgba(var(--bs-primary-rgb), 0.05);
+        color: var(--bs-primary);
+    }
+    .profile-nav .nav-link.active {
+        background-color: rgba(var(--bs-primary-rgb), 0.1) !important;
+        color: var(--bs-primary) !important;
+        font-weight: 600;
+        border-left: 4px solid var(--bs-primary);
+    }
+</style>

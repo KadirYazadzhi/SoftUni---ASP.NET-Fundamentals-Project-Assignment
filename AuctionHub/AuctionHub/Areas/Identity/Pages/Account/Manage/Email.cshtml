@@ -1,0 +1,46 @@
+@page
+@model EmailModel
+@{
+    ViewData["Title"] = "Manage Email";
+    ViewData["ActivePage"] = ManageNavPages.Email;
+}
+
+<h3 class="fw-bold mb-4">@ViewData["Title"]</h3>
+<partial name="_StatusMessage" for="StatusMessage" />
+
+<form id="email-form" method="post">
+    <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+    
+    @if (Model.IsEmailConfirmed)
+    {
+        <div class="mb-4">
+            <label asp-for="Email" class="form-label small text-muted text-uppercase fw-bold"></label>
+            <div class="input-group">
+                <input asp-for="Email" class="form-control bg-light" disabled />
+                <span class="input-group-text text-success fw-bold bg-success-subtle border-0">
+                    <i class="bi bi-patch-check-fill me-1"></i> Verified
+                </span>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="mb-4">
+            <label asp-for="Email" class="form-label small text-muted text-uppercase fw-bold"></label>
+            <input asp-for="Email" class="form-control bg-light" disabled />
+            <button id="email-verification" type="submit" asp-page-handler="SendVerificationEmail" class="btn btn-link px-0">Send verification email</button>
+        </div>
+    }
+
+    <div class="mb-4">
+        <label asp-for="Input.NewEmail" class="form-label small text-muted text-uppercase fw-bold"></label>
+        <input asp-for="Input.NewEmail" class="form-control" autocomplete="email" aria-required="true" placeholder="Enter new email" />
+        <span asp-validation-for="Input.NewEmail" class="text-danger"></span>
+    </div>
+
+    <button id="change-email-button" type="submit" asp-page-handler="ChangeEmail" class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm">Change Email</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
