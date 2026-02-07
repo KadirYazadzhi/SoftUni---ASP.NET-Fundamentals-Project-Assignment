@@ -96,7 +96,7 @@
                 </div>
 
                 <!-- Buy It Now Card -->
-                @if (User.Identity?.IsAuthenticated == true && Model.IsActive && Model.BuyItNowPrice.HasValue)
+                @if (User.Identity?.IsAuthenticated == true && Model.IsActive && Model.BuyItNowPrice.HasValue && Model.SellerId != User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value && Model.CurrentPrice < Model.BuyItNowPrice)
                 {
                     <div class="card bg-success-subtle border-success mb-4">
                         <div class="card-body p-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
@@ -119,28 +119,44 @@
                 {
                     @if (Model.IsActive)
                     {
-                        <div class="card border-primary border-2 rounded-4 mb-4 active-bid">
-                            <div class="card-body p-4">
-                                <h5 class="fw-bold mb-3">Place Your Bid</h5>
-                                <form asp-action="PlaceBid" method="post" class="row g-2">
-                                    <input type="hidden" name="AuctionId" value="@Model.Id" />
-                                    <div class="col-8">
-                                        <div class="input-group input-group-lg">
-                                            <span class="input-group-text bg-white border-end-0">$</span>
-                                            <input type="number" step="0.01" class="form-control border-start-0" 
-                                                   name="Amount" value="@Model.NewBidAmount" min="@Model.NewBidAmount">
-                                        </div>
+                        var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                        if (Model.SellerId == currentUserId)
+                        {
+                            <div class="alert alert-info rounded-4 border-0 p-4 mb-4">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-info-circle-fill fs-4 me-3"></i>
+                                    <div>
+                                        <h5 class="fw-bold mb-1">This is your auction</h5>
+                                        <p class="mb-0">You can manage this listing using the controls above. You cannot place bids on your own items.</p>
                                     </div>
-                                    <div class="col-4">
-                                        <button type="submit" class="btn btn-primary btn-lg w-100 rounded-3">Bid</button>
-                                    </div>
-                                </form>
-                                <p class="text-muted small mt-3 mb-0">
-                                    <i class="bi bi-info-circle me-1"></i> Minimum increase: @Model.MinIncrease.ToString("C") <br/>
-                                    Next bid must be at least @Model.NewBidAmount.ToString("C")
-                                </p>
+                                </div>
                             </div>
-                        </div>
+                        }
+                        else
+                        {
+                            <div class="card border-primary border-2 rounded-4 mb-4 active-bid">
+                                <div class="card-body p-4">
+                                    <h5 class="fw-bold mb-3">Place Your Bid</h5>
+                                    <form asp-action="PlaceBid" method="post" class="row g-2">
+                                        <input type="hidden" name="AuctionId" value="@Model.Id" />
+                                        <div class="col-8">
+                                            <div class="input-group input-group-lg">
+                                                <span class="input-group-text bg-white border-end-0">$</span>
+                                                <input type="number" step="0.01" class="form-control border-start-0" 
+                                                       name="Amount" value="@Model.NewBidAmount" min="@Model.NewBidAmount">
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <button type="submit" class="btn btn-primary btn-lg w-100 rounded-3">Bid</button>
+                                        </div>
+                                    </form>
+                                    <p class="text-muted small mt-3 mb-0">
+                                        <i class="bi bi-info-circle me-1"></i> Minimum increase: @Model.MinIncrease.ToString("C") <br/>
+                                        Next bid must be at least @Model.NewBidAmount.ToString("C")
+                                    </p>
+                                </div>
+                            </div>
+                        }
                     }
                     else
                     {
