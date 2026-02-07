@@ -7,10 +7,12 @@ namespace AuctionHub.Services;
 public class AuctionService : IAuctionService
 {
     private readonly AuctionHubDbContext _context;
+    private readonly INotificationService _notificationService;
 
-    public AuctionService(AuctionHubDbContext context)
+    public AuctionService(AuctionHubDbContext context, INotificationService notificationService)
     {
         _context = context;
+        _notificationService = notificationService;
     }
 
     public async Task<(bool Success, string Message)> PlaceBidAsync(int auctionId, string userId, decimal amount)
@@ -45,7 +47,7 @@ public class AuctionService : IAuctionService
                 TransactionDate = DateTime.UtcNow
             });
 
-            // 2. Refund Previous Bidder
+            // 2. Refund Previous Bidder & Notify
             var previousHighBid = auction.Bids.OrderByDescending(b => b.Amount).FirstOrDefault();
             if (previousHighBid != null)
             {
@@ -73,6 +75,11 @@ public class AuctionService : IAuctionService
                         TransactionType = "Refund",
                         TransactionDate = DateTime.UtcNow
                     });
+
+                    // NOTIFY PREVIOUS BIDDER
+                    await _notificationService.NotifyUserAsync(previousBidder.Id, 
+                        $"You have been outbid on '{auction.Title}'! Current price: {amount:C}", 
+                        $"/Auctions/Details/{auctionId}");
                 }
             }
 
@@ -87,10 +94,21 @@ public class AuctionService : IAuctionService
             auction.CurrentPrice = amount;
             auction.Bids.Add(bid);
 
+            // NOTIFY WATCHERS
+            await _notificationService.NotifyAllWatchersAsync(auctionId, 
+                $"New bid on watched item '{auction.Title}': {amount:C}", 
+                $"/Auctions/Details/{auctionId}",
+                excludeUserId: userId);
+
             if (auction.BuyItNowPrice.HasValue && amount >= auction.BuyItNowPrice.Value)
             {
                 auction.IsActive = false;
                 auction.EndTime = DateTime.UtcNow;
+                
+                // NOTIFY EVERYONE IT'S SOLD
+                await _notificationService.NotifyAllWatchersAsync(auctionId, 
+                    $"Auction '{auction.Title}' has ended (Buy It Now price reached).", 
+                    $"/Auctions/Details/{auctionId}");
             }
 
             await _context.SaveChangesAsync();
@@ -106,7 +124,6 @@ public class AuctionService : IAuctionService
         catch (Exception)
         {
             await dbTransaction.RollbackAsync();
-            // Log ex
             return (false, "An error occurred while placing bid.");
         }
     }
@@ -172,6 +189,11 @@ public class AuctionService : IAuctionService
                         TransactionType = "Refund",
                         TransactionDate = DateTime.UtcNow
                     });
+
+                     // NOTIFY PREVIOUS BIDDER
+                    await _notificationService.NotifyUserAsync(previousBidder.Id, 
+                        $"Item '{auction.Title}' was purchased via Buy It Now. Your bid has been refunded.", 
+                        $"/Auctions/Details/{auctionId}");
                 }
             }
 
@@ -190,6 +212,12 @@ public class AuctionService : IAuctionService
             // Close Auction
             auction.IsActive = false;
             auction.EndTime = DateTime.UtcNow;
+
+            // NOTIFY WATCHERS
+            await _notificationService.NotifyAllWatchersAsync(auctionId, 
+                $"Item '{auction.Title}' was sold for {price:C}!", 
+                $"/Auctions/Details/{auctionId}",
+                excludeUserId: userId);
 
             await _context.SaveChangesAsync();
             await dbTransaction.CommitAsync();

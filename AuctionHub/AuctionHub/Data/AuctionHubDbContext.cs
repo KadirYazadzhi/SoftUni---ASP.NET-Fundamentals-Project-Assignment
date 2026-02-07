@@ -16,6 +16,7 @@ public class AuctionHubDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Bid> Bids { get; set; } = null!;
     public DbSet<Transaction> Transactions { get; set; } = null!;
     public DbSet<AuctionWatchlist> Watchlist { get; set; } = null!;
+    public DbSet<Notification> Notifications { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

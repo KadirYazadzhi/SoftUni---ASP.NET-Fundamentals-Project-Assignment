@@ -58,6 +58,13 @@
                     
                     @if (User.Identity?.IsAuthenticated ?? false)
                     {
+                        <a class="btn btn-link nav-link position-relative me-2" asp-controller="Notifications" asp-action="Index">
+                            <i class="bi bi-bell-fill fs-5"></i>
+                            <span id="notificationBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" style="font-size: 0.6rem;">
+                                0
+                            </span>
+                        </a>
+
                         <a class="btn btn-primary rounded-pill px-4" asp-controller="Auctions" asp-action="Create">
                             <i class="bi bi-plus-lg me-1"></i> Sell Item
                         </a>
@@ -155,6 +162,32 @@
     });
 
     updateIcon(document.documentElement.getAttribute('data-bs-theme'));
+
+    // Notification Polling
+    @if (User.Identity?.IsAuthenticated ?? false)
+    {
+        <text>
+        async function checkNotifications() {
+            try {
+                const response = await fetch('/Notifications/GetUnreadCount');
+                if (response.ok) {
+                    const count = await response.json();
+                    const badge = document.getElementById('notificationBadge');
+                    if (count > 0) {
+                        badge.innerText = count > 99 ? '99+' : count;
+                        badge.classList.remove('d-none');
+                    } else {
+                        badge.classList.add('d-none');
+                    }
+                }
+            } catch (e) { console.error(e); }
+        }
+        
+        // Check immediately and then every 60 seconds
+        checkNotifications();
+        setInterval(checkNotifications, 60000);
+        </text>
+    }
 </script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>

@@ -536,27 +536,66 @@ public class AuctionsController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> MyWatchlist()
+    public async Task<IActionResult> MyWatchlist(string? searchTerm, int? categoryId, string? sortOrder, int? pageNumber, decimal? minPrice, decimal? maxPrice, string? status)
     {
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        ViewData["CurrentSort"] = sortOrder;
+        ViewData["CurrentSearch"] = searchTerm;
+        ViewData["CurrentCategory"] = categoryId;
+        ViewData["MinPrice"] = minPrice;
+        ViewData["MaxPrice"] = maxPrice;
+        ViewData["Status"] = status;
         
-        var auctions = await _context.Watchlist
+        var query = _context.Watchlist
             .Where(w => w.UserId == currentUserId)
             .Include(w => w.Auction)
             .ThenInclude(a => a.Category)
-            .Select(w => new AuctionListViewModel
-            {
-                Id = w.Auction.Id,
-                Title = w.Auction.Title,
-                ImageUrl = w.Auction.ImageUrl,
-                CurrentPrice = w.Auction.CurrentPrice,
-                EndTime = w.Auction.EndTime,
-                Category = w.Auction.Category.Name,
-                IsActive = w.Auction.IsActive
-            })
-            .ToListAsync();
+            .Select(w => w.Auction)
+            .AsQueryable();
 
-        return View(auctions);
+        // Filtering Logic (Reused)
+        if (!string.IsNullOrEmpty(status))
+        {
+            if (status == "active") query = query.Where(a => a.IsActive && a.EndTime > DateTime.UtcNow);
+            else if (status == "closed") query = query.Where(a => !a.IsActive || a.EndTime <= DateTime.UtcNow);
+        }
+
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            var normalizedSearch = searchTerm.ToLower();
+            query = query.Where(a => a.Title.ToLower().Contains(normalizedSearch) || 
+                             a.Description.ToLower().Contains(normalizedSearch));
+        }
+
+        if (categoryId.HasValue) query = query.Where(a => a.CategoryId == categoryId.Value);
+        if (minPrice.HasValue) query = query.Where(a => a.CurrentPrice >= minPrice.Value);
+        if (maxPrice.HasValue) query = query.Where(a => a.CurrentPrice <= maxPrice.Value);
+
+        // Sorting
+        query = sortOrder switch
+        {
+            "price_desc" => query.OrderByDescending(a => a.CurrentPrice),
+            "price_asc" => query.OrderBy(a => a.CurrentPrice),
+            _ => query.OrderByDescending(a => a.EndTime)
+        };
+
+        var projectedQuery = query.Select(a => new AuctionListViewModel
+        {
+            Id = a.Id,
+            Title = a.Title,
+            ImageUrl = a.ImageUrl,
+            CurrentPrice = a.CurrentPrice,
+            EndTime = a.EndTime,
+            Category = a.Category.Name,
+            IsActive = a.IsActive
+        });
+
+        int pageSize = 6;
+        var paginated = await PaginatedList<AuctionListViewModel>.CreateAsync(projectedQuery, pageNumber ?? 1, pageSize);
+        ViewBag.Categories = await GetCategoriesAsync();
+
+        return View(paginated);
     }
 
     private void ValidateImage(IFormFile? file)
