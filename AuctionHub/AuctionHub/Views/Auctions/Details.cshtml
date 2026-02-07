@@ -4,192 +4,220 @@
     ViewData["Title"] = Model.Title;
 }
 
-<div class="container py-4">
+<div class="container py-5">
+    <!-- Feedback Messages -->
     @if (TempData["Success"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show rounded-4 shadow-sm mb-4 border-0" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+        <div class="alert alert-success alert-dismissible fade show rounded-pill shadow-sm mb-4 border-0 px-4 py-3 animate-fade-up" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-check-circle-fill me-3 fs-4"></i>
+                <div>@TempData["Success"]</div>
+            </div>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
 
     @if (TempData["Error"] != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show rounded-4 shadow-sm mb-4 border-0" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+        <div class="alert alert-danger alert-dismissible fade show rounded-pill shadow-sm mb-4 border-0 px-4 py-3 animate-fade-up" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-exclamation-triangle-fill me-3 fs-4"></i>
+                <div>@TempData["Error"]</div>
+            </div>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
 
     <div class="row g-5">
-        <!-- Left Column: Media -->
-        <div class="col-lg-7">
+        <!-- Media Column -->
+        <div class="col-lg-7 animate-fade-up">
             <div class="sticky-top" style="top: 100px;">
-                <div class="card border-0 shadow-lg rounded-5 overflow-hidden">
+                <div class="card border-0 shadow-lg rounded-5 overflow-hidden mb-4">
                     <img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "https://via.placeholder.com/800x600?text=No+Image" : Model.ImageUrl)" 
-                         class="img-fluid w-100" alt="@Model.Title">
+                         class="img-fluid w-100 object-fit-cover" style="max-height: 600px;" alt="@Model.Title">
                 </div>
                 
-                <div class="mt-5 p-4 bg-card rounded-4 border shadow-sm">
-                    <h4 class="fw-bold mb-3">Item Description</h4>
-                    <p class="lead text-muted" style="white-space: pre-wrap;">@Model.Description</p>
+                <div class="card border-0 shadow-sm rounded-5 bg-white p-4 p-lg-5">
+                    <h4 class="fw-bold mb-4 d-flex align-items-center">
+                        <i class="bi bi-info-circle text-primary me-2"></i> Item Description
+                    </h4>
+                    <p class="lead text-muted mb-0" style="white-space: pre-wrap; line-height: 1.8;">@Model.Description</p>
                 </div>
             </div>
         </div>
 
-        <!-- Right Column: Info & Bidding -->
-        <div class="col-lg-5">
-            <div class="p-4 rounded-5 bg-card border shadow-sm h-100">
-                <nav aria-label="breadcrumb" class="mb-3">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none">Auctions</a></li>
-                        <li class="breadcrumb-item active">@Model.Category</li>
-                    </ol>
-                </nav>
-
-                <h1 class="display-5 fw-bold mb-2">@Model.Title</h1>
-                <div class="d-flex align-items-center mb-4">
-                    <div class="avatar-sm bg-primary-subtle text-primary rounded-circle p-2 me-2">
-                        <i class="bi bi-person-fill"></i>
-                    </div>
-                    <span class="text-muted">Listed by <strong class="text-main">@Model.Seller</strong></span>
-                    
-                    @if(User.Identity?.IsAuthenticated == true)
-                    {
-                        <form asp-action="ToggleWatchlist" asp-route-id="@Model.Id" method="post" class="ms-auto">
-                            <button type="submit" class="btn btn-sm @(Model.IsWatched ? "btn-warning" : "btn-outline-secondary") rounded-pill">
-                                <i class="bi @(Model.IsWatched ? "bi-star-fill" : "bi-star") me-1"></i> 
-                                @(Model.IsWatched ? "Watching" : "Watch")
-                            </button>
-                        </form>
-                    }
-                </div>
-
-                @if (User.Identity?.IsAuthenticated == true && Model.SellerId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)
-                {
-                    <div class="d-flex gap-2 mb-4">
-                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning rounded-pill px-4">
-                            <i class="bi bi-pencil-square me-1"></i> Edit
-                        </a>
-                        <form asp-action="Delete" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Are you sure?');">
-                            <button type="submit" class="btn btn-danger rounded-pill px-4">
-                                <i class="bi bi-trash3-fill me-1"></i> Delete
-                            </button>
-                        </form>
-                    </div>
-                }
-
-                <div class="p-4 bg-primary-subtle rounded-4 mb-4">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span class="text-primary-emphasis fw-semibold">Current High Bid</span>
-                        <span class="badge bg-primary rounded-pill">Active</span>
-                    </div>
-                    <div class="display-4 fw-bolder text-primary">@Model.CurrentPrice.ToString("C")</div>
-                    <small class="text-primary-emphasis opacity-75">Starting from @Model.StartPrice.ToString("C")</small>
-                </div>
-
-                <div class="mb-4">
-                    <div class="d-flex align-items-center text-danger mb-2">
-                        <i class="bi bi-alarm-fill fs-4 me-2"></i>
-                        <span class="fw-bold">Time Left: @Model.EndTime.ToString("f")</span>
-                    </div>
-                </div>
-
-                <!-- Buy It Now Card -->
-                @if (User.Identity?.IsAuthenticated == true && Model.IsActive && Model.BuyItNowPrice.HasValue && Model.SellerId != User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value && Model.CurrentPrice < Model.BuyItNowPrice)
-                {
-                    <div class="card bg-success-subtle border-success mb-4">
-                        <div class="card-body p-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
-                            <div>
-                                <h5 class="fw-bold text-success mb-1"><i class="bi bi-bag-check-fill me-2"></i>Buy It Now</h5>
-                                <p class="mb-0 text-success-emphasis">Purchase immediately for <strong>@Model.BuyItNowPrice.Value.ToString("C")</strong></p>
-                            </div>
-                            <form asp-action="BuyItNow" method="post" onsubmit="return confirm('Buy this item for @Model.BuyItNowPrice.Value.ToString("C")?');">
-                                <input type="hidden" name="auctionId" value="@Model.Id" />
-                                <button type="submit" class="btn btn-success btn-lg px-4 rounded-pill shadow-sm">
-                                    Buy Now
+        <!-- Details & Bidding Column -->
+        <div class="col-lg-5 animate-fade-up delay-100">
+            <div class="card border-0 shadow-sm rounded-5 bg-white h-100 overflow-hidden">
+                <div class="card-body p-4 p-lg-5">
+                    <!-- Category & Watchlist -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">
+                            <i class="bi bi-tag-fill me-1"></i> @Model.Category
+                        </span>
+                        
+                        @if(User.Identity?.IsAuthenticated == true)
+                        {
+                            <form asp-action="ToggleWatchlist" asp-route-id="@Model.Id" method="post">
+                                <button type="submit" class="btn btn-sm @(Model.IsWatched ? "btn-warning" : "btn-outline-secondary") rounded-pill px-3 py-2">
+                                    <i class="bi @(Model.IsWatched ? "bi-star-fill" : "bi-star") me-1"></i> 
+                                    @(Model.IsWatched ? "Watching" : "Watch")
                                 </button>
                             </form>
+                        }
+                    </div>
+
+                    <h1 class="display-5 fw-bold mb-3">@Model.Title</h1>
+                    
+                    <div class="d-flex align-items-center mb-5 p-3 bg-light rounded-4">
+                        <div class="avatar-sm bg-white text-primary rounded-circle p-2 me-3 shadow-sm">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block">Listed by</small>
+                            <strong class="text-dark">@Model.Seller</strong>
+                        </div>
+                        
+                        @if (User.Identity?.IsAuthenticated == true && Model.SellerId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)
+                        {
+                            <div class="ms-auto d-flex gap-2">
+                                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-warning rounded-pill">Edit</a>
+                                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Are you sure?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill">Delete</button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Pricing Display -->
+                    <div class="p-4 rounded-5 mb-4 text-center" style="background: linear-gradient(135deg, rgba(67, 97, 238, 0.05) 0%, rgba(67, 97, 238, 0.1) 100%); border: 1px solid rgba(67, 97, 238, 0.1);">
+                        <span class="text-muted small text-uppercase letter-spacing-1 fw-bold mb-2 d-block">Current High Bid</span>
+                        <div class="display-3 fw-bolder text-primary mb-1">@Model.CurrentPrice.ToString("C")</div>
+                        <div class="d-flex justify-content-center gap-3 mt-3">
+                            <span class="badge @(Model.IsActive ? "bg-success" : "bg-secondary") rounded-pill px-3 py-2">
+                                @(Model.IsActive ? "Active" : "Closed")
+                            </span>
+                            @if(Model.IsActive)
+                            {
+                                <span class="text-danger fw-bold small d-flex align-items-center">
+                                    <i class="bi bi-clock-fill me-1"></i> @Model.EndTime.ToString("g")
+                                </span>
+                            }
                         </div>
                     </div>
-                }
 
-                <!-- Bidding Card -->
-                @if (User.Identity?.IsAuthenticated == true)
-                {
-                    @if (Model.IsActive)
+                    <!-- Buy It Now -->
+                    @if (User.Identity?.IsAuthenticated == true && Model.IsActive && Model.BuyItNowPrice.HasValue && Model.SellerId != User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value && Model.CurrentPrice < Model.BuyItNowPrice)
                     {
-                        var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-                        if (Model.SellerId == currentUserId)
+                        <div class="card border-0 bg-success bg-opacity-10 rounded-5 mb-4">
+                            <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="fw-bold text-success mb-1">Buy It Now</h6>
+                                    <div class="h4 fw-bold text-success-emphasis mb-0">@Model.BuyItNowPrice.Value.ToString("C")</div>
+                                </div>
+                                <form asp-action="BuyItNow" method="post" onsubmit="return confirm('Buy Now?');">
+                                    <input type="hidden" name="auctionId" value="@Model.Id" />
+                                    <button type="submit" class="btn btn-success rounded-pill px-4 py-2 fw-bold shadow-sm">Purchase</button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Bid Section -->
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        if (Model.IsActive)
                         {
-                            <div class="alert alert-info rounded-4 border-0 p-4 mb-4">
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-info-circle-fill fs-4 me-3"></i>
-                                    <div>
-                                        <h5 class="fw-bold mb-1">This is your auction</h5>
-                                        <p class="mb-0">You can manage this listing using the controls above. You cannot place bids on your own items.</p>
+                            var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                            if (Model.SellerId == currentUserId)
+                            {
+                                <div class="alert alert-primary bg-primary-subtle border-0 rounded-4 p-4 text-center">
+                                    <i class="bi bi-info-circle-fill display-6 mb-2 d-block"></i>
+                                    <p class="mb-0 fw-semibold">You are the seller of this item.</p>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="card border-primary border-opacity-25 rounded-5 mb-4 shadow-sm overflow-hidden">
+                                    <div class="card-body p-4">
+                                        <h5 class="fw-bold mb-3 text-center">Ready to win?</h5>
+                                        <form asp-action="PlaceBid" method="post">
+                                            <input type="hidden" name="AuctionId" value="@Model.Id" />
+                                            <div class="input-group input-group-lg mb-3">
+                                                <span class="input-group-text bg-white border-end-0 rounded-start-pill ps-4 fw-bold text-primary">$</span>
+                                                <input type="number" step="0.01" class="form-control border-start-0 rounded-end-pill py-3" 
+                                                       name="Amount" value="@Model.NewBidAmount" min="@Model.NewBidAmount">
+                                            </div>
+                                            <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold py-3 shadow-sm hover-lift">
+                                                Place Your Bid
+                                            </button>
+                                        </form>
+                                        <div class="text-center mt-3 text-muted small">
+                                            Minimum increment: <span class="fw-bold">@Model.MinIncrease.ToString("C")</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            }
                         }
                         else
                         {
-                            <div class="card border-primary border-2 rounded-5 mb-4 active-bid overflow-hidden">
-                                <div class="card-body p-4">
-                                    <h5 class="fw-bold mb-3">Place Your Bid</h5>
-                                    <form asp-action="PlaceBid" method="post" class="row g-2">
-                                        <input type="hidden" name="AuctionId" value="@Model.Id" />
-                                        <div class="col-8">
-                                            <div class="input-group input-group-lg">
-                                                <span class="input-group-text bg-white border-end-0 rounded-start-pill ps-3">$</span>
-                                                <input type="number" step="0.01" class="form-control border-start-0 rounded-end-pill" 
-                                                       name="Amount" value="@Model.NewBidAmount" min="@Model.NewBidAmount">
-                                            </div>
-                                        </div>
-                                        <div class="col-4">
-                                            <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill">Bid</button>
-                                        </div>
-                                    </form>
-                                    <p class="text-muted small mt-3 mb-0">
-                                        <i class="bi bi-info-circle me-1"></i> Minimum increase: @Model.MinIncrease.ToString("C") <br/>
-                                        Next bid must be at least @Model.NewBidAmount.ToString("C")
-                                    </p>
-                                </div>
+                            <div class="alert alert-secondary border-0 rounded-4 p-4 text-center">
+                                <i class="bi bi-lock-fill fs-3 mb-2 d-block"></i>
+                                <p class="mb-0 fw-bold">This auction has concluded.</p>
                             </div>
                         }
                     }
                     else
                     {
-                        <div class="alert alert-secondary rounded-4 border-0 py-3">
-                            <i class="bi bi-lock-fill me-2"></i> This auction has concluded.
+                        <div class="card border-0 bg-primary bg-opacity-10 rounded-5 p-4 text-center">
+                            <h5 class="fw-bold mb-3 text-primary">Join the Bidding</h5>
+                            <p class="text-muted small mb-4">You must be logged in to participate in this auction.</p>
+                            <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary rounded-pill w-100 py-3 fw-bold shadow-sm">Log In to Bid</a>
                         </div>
                     }
-                }
-                else
-                {
-                    <div class="alert bg-primary-subtle text-primary rounded-4 border-0 p-4">
-                        <p class="mb-3 fw-bold">Ready to participate?</p>
-                        <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary w-100 rounded-pill">Login to Bid</a>
-                    </div>
-                }
 
-                <!-- History Preview -->
-                <div class="mt-5">
-                    <h5 class="fw-bold mb-4">Bid History (@Model.Bids.Count())</h5>
-                    <div class="list-group list-group-flush border-0">
-                        @foreach (var bid in Model.Bids.Take(5))
-                        {
-                            <div class="list-group-item bg-light bg-opacity-10 border-0 rounded-4 mb-2 px-4 py-3 d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="mb-0 fw-bold">@bid.Bidder</h6>
-                                    <small class="text-muted">@bid.BidTime.ToString("g")</small>
+                    <!-- History Timeline -->
+                    <div class="mt-5">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="fw-bold mb-0">Bid History</h5>
+                            <span class="badge bg-light text-dark rounded-pill border">@Model.Bids.Count() Bids</span>
+                        </div>
+                        
+                        <div class="timeline">
+                            @if (!Model.Bids.Any())
+                            {
+                                <div class="text-center py-4 bg-light rounded-4">
+                                    <p class="text-muted small mb-0">No bids yet. Be the first!</p>
                                 </div>
-                                <span class="fw-bold text-primary fs-5">@bid.Amount.ToString("C")</span>
-                            </div>
-                        }
+                            }
+                            else
+                            {
+                                @foreach (var bid in Model.Bids.Take(5))
+                                {
+                                    <div class="d-flex align-items-center p-3 mb-3 bg-white border border-light rounded-4 shadow-sm hover-lift">
+                                        <div class="avatar-xs bg-primary-subtle text-primary rounded-circle p-2 me-3">
+                                            <i class="bi bi-person"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <strong class="text-dark">@bid.Bidder</strong>
+                                                <span class="fw-bold text-primary">@bid.Amount.ToString("C")</span>
+                                            </div>
+                                            <small class="text-muted x-small">@bid.BidTime.ToLocalTime().ToString("MMM dd, HH:mm")</small>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .letter-spacing-1 { letter-spacing: 1px; }
+    .x-small { font-size: 0.75rem; }
+    .avatar-xs { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
+</style>
