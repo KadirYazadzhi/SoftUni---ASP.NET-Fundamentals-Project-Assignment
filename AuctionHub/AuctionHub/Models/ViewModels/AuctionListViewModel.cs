@@ -8,6 +8,7 @@ public class AuctionListViewModel
     public decimal CurrentPrice { get; set; }
     public DateTime EndTime { get; set; }
     public string Category { get; set; } = null!;
+    public int CategoryId { get; set; }
     public bool IsActive { get; set; }
     
     // Nullable because it's only relevant for logged-in users in specific contexts

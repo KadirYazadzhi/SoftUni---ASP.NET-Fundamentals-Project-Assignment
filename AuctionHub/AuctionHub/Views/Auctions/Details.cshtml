@@ -75,7 +75,9 @@
                         </div>
                         <div>
                             <small class="text-muted d-block">Listed by</small>
-                            <strong class="text-dark">@Model.Seller</strong>
+                            <a asp-action="UserAuctions" asp-route-username="@Model.Seller" class="text-decoration-none fw-bold text-dark hover-primary">
+                                @Model.Seller
+                            </a>
                         </div>
                         
                         @if (User.Identity?.IsAuthenticated == true && Model.SellerId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)

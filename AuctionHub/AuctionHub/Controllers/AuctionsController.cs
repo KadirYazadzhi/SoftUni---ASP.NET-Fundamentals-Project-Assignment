@@ -89,6 +89,7 @@ public class AuctionsController : Controller
             CurrentPrice = a.CurrentPrice,
             EndTime = a.EndTime,
             Category = a.Category.Name,
+            CategoryId = a.CategoryId,
             IsActive = a.IsActive
         });
 
@@ -249,6 +250,7 @@ public class AuctionsController : Controller
             CurrentPrice = a.CurrentPrice,
             EndTime = a.EndTime,
             Category = a.Category.Name,
+            CategoryId = a.CategoryId,
             IsActive = a.IsActive
         });
 
@@ -316,8 +318,78 @@ public class AuctionsController : Controller
             CurrentPrice = a.CurrentPrice,
             EndTime = a.EndTime,
             Category = a.Category.Name,
+            CategoryId = a.CategoryId,
             IsActive = a.IsActive,
             IsWinning = myMaxBids.ContainsKey(a.Id) && myMaxBids[a.Id] >= a.CurrentPrice
+        });
+
+        int pageSize = 6;
+        var paginated = await PaginatedList<AuctionListViewModel>.CreateAsync(projectedQuery, pageNumber ?? 1, pageSize);
+        ViewBag.Categories = await GetCategoriesAsync();
+
+        return View(paginated);
+    }
+
+    [AllowAnonymous]
+    [HttpGet]
+    public async Task<IActionResult> UserAuctions(string username, string? searchTerm, int? categoryId, string? sortOrder, int? pageNumber, decimal? minPrice, decimal? maxPrice, string? status = "active")
+    {
+        if (string.IsNullOrEmpty(username)) return NotFound();
+
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == username);
+        if (user == null) return NotFound();
+
+        ViewData["TargetUser"] = user.DisplayName;
+        ViewData["CurrentSort"] = sortOrder;
+        ViewData["CurrentSearch"] = searchTerm;
+        ViewData["CurrentCategory"] = categoryId;
+        ViewData["MinPrice"] = minPrice;
+        ViewData["MaxPrice"] = maxPrice;
+        ViewData["Status"] = status;
+
+        var query = _context.Auctions
+            .Include(a => a.Category)
+            .Where(a => a.SellerId == user.Id);
+
+        // Status Filtering (Default: active)
+        if (status == "active")
+        {
+            query = query.Where(a => a.IsActive && a.EndTime > DateTime.UtcNow);
+        }
+        else if (status == "closed")
+        {
+            query = query.Where(a => !a.IsActive || a.EndTime <= DateTime.UtcNow);
+        }
+
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            var normalizedSearch = searchTerm.ToLower();
+            query = query.Where(a => a.Title.ToLower().Contains(normalizedSearch) || 
+                             a.Description.ToLower().Contains(normalizedSearch));
+        }
+
+        if (categoryId.HasValue) query = query.Where(a => a.CategoryId == categoryId.Value);
+        if (minPrice.HasValue) query = query.Where(a => a.CurrentPrice >= minPrice.Value);
+        if (maxPrice.HasValue) query = query.Where(a => a.CurrentPrice <= maxPrice.Value);
+
+        // Sorting
+        query = sortOrder switch
+        {
+            "price_desc" => query.OrderByDescending(a => a.CurrentPrice),
+            "price_asc" => query.OrderBy(a => a.CurrentPrice),
+            _ => query.OrderByDescending(a => a.CreatedOn)
+        };
+
+        var projectedQuery = query.Select(a => new AuctionListViewModel
+        {
+            Id = a.Id,
+            Title = a.Title,
+            ImageUrl = a.ImageUrl,
+            CurrentPrice = a.CurrentPrice,
+            EndTime = a.EndTime,
+            Category = a.Category.Name,
+            CategoryId = a.CategoryId,
+            IsActive = a.IsActive
         });
 
         int pageSize = 6;
@@ -588,6 +660,7 @@ public class AuctionsController : Controller
             CurrentPrice = a.CurrentPrice,
             EndTime = a.EndTime,
             Category = a.Category.Name,
+            CategoryId = a.CategoryId,
             IsActive = a.IsActive
         });
 
