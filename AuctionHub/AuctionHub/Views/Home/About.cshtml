@@ -1,0 +1,81 @@
+@{
+    ViewData["Title"] = "About Us";
+}
+
+<div class="container py-5">
+    <!-- Hero Section -->
+    <section class="text-center mb-5 animate-fade-up">
+        <span class="badge bg-primary-subtle text-primary mb-3 px-4 py-2 rounded-pill">Our Story</span>
+        <h1 class="display-4 fw-bold mb-4">Connecting People Through <br><span class="text-primary">Unique Treasures</span></h1>
+        <p class="lead text-muted mx-auto" style="max-width: 700px;">
+            Founded in 2026, AuctionHub began with a simple mission: to create a secure, transparent, and exciting marketplace for collectors worldwide.
+        </p>
+    </section>
+
+    <!-- Content Blocks -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-6 animate-fade-up delay-100">
+            <div class="card border-0 shadow-sm rounded-5 h-100 p-4 p-lg-5 bg-white">
+                <div class="icon-box-md bg-primary text-white rounded-circle mb-4 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                    <i class="bi bi-rocket-takeoff-fill fs-3"></i>
+                </div>
+                <h3 class="fw-bold mb-3">What is AuctionHub?</h3>
+                <p class="text-muted">
+                    AuctionHub is a premium online auction platform designed for both seasoned collectors and casual enthusiasts. We provide a robust ecosystem where rare finds meet their next owners through real-time bidding and secure transactions.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-6 animate-fade-up delay-200">
+            <div class="card border-0 shadow-sm rounded-5 h-100 p-4 p-lg-5 bg-white">
+                <div class="icon-box-md bg-success text-white rounded-circle mb-4 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                    <i class="bi bi-shield-lock-fill fs-3"></i>
+                </div>
+                <h3 class="fw-bold mb-3">Our Core Values</h3>
+                <p class="text-muted">
+                    Integrity, security, and community are the pillars of our platform. Every auction is monitored, every user is verified, and every bid is protected by our advanced escrow and notification systems.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact & Email Form Section -->
+    <section class="row justify-content-center animate-fade-up delay-300">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg rounded-5 overflow-hidden">
+                <div class="row g-0">
+                    <div class="col-md-5 bg-primary p-5 text-white d-flex flex-column justify-content-center">
+                        <h3 class="fw-bold mb-4">Get in Touch</h3>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-geo-alt-fill me-3"></i>
+                            <span>123 Innovation Drive, Sofia, Bulgaria</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-envelope-fill me-3"></i>
+                            <span>hello@auctionhub.com</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-telephone-fill me-3"></i>
+                            <span>+359 888 000 000</span>
+                        </div>
+                    </div>
+                    <div class="col-md-7 p-5 bg-white">
+                        <h4 class="fw-bold mb-4">Send us a message</h4>
+                        <form id="contactForm">
+                            <div class="mb-3">
+                                <label class="form-label small text-muted fw-bold">YOUR EMAIL</label>
+                                <input type="email" class="form-control rounded-pill border-light bg-light px-4 py-3" placeholder="name@example.com" required>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label small text-muted fw-bold">MESSAGE</label>
+                                <textarea class="form-control rounded-4 border-light bg-light px-4 py-3" rows="4" placeholder="How can we help you?" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary rounded-pill px-5 py-3 fw-bold shadow-sm w-100">
+                                Send Message <i class="bi bi-send ms-2"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
