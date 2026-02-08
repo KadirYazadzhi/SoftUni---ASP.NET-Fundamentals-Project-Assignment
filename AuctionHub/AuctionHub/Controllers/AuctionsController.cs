@@ -135,7 +135,7 @@ public class AuctionsController : Controller
             BuyItNowPrice = auction.BuyItNowPrice,
             EndTime = auction.EndTime,
             Category = auction.Category.Name,
-            Seller = auction.Seller.UserName ?? auction.Seller.Email ?? "Unknown",
+            Seller = auction.Seller.DisplayName,
             SellerId = auction.SellerId,
             IsActive = auction.IsActive && auction.EndTime > DateTime.UtcNow,
             IsWatched = isWatched,
@@ -145,7 +145,7 @@ public class AuctionsController : Controller
                 {
                     Amount = b.Amount,
                     BidTime = b.BidTime,
-                    Bidder = b.Bidder.UserName ?? b.Bidder.Email ?? "Unknown"
+                    Bidder = b.Bidder.DisplayName
                 })
                 .ToList(),
             NewBidAmount = auction.CurrentPrice + auction.MinIncrease

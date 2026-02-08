@@ -66,6 +66,18 @@ using (var scope = app.Services.CreateScope())
     var context = services.GetRequiredService<AuctionHubDbContext>();
     // Automatic migration for development
     context.Database.Migrate();
+    
+    // Fix users without UserNames
+    var usersWithNoNames = await context.Users.Where(u => u.UserName == null || u.UserName == "").ToListAsync();
+    foreach (var user in usersWithNoNames)
+    {
+        if (!string.IsNullOrEmpty(user.Email))
+        {
+            user.UserName = user.Email.Split('@')[0];
+        }
+    }
+    if (usersWithNoNames.Any()) await context.SaveChangesAsync();
+
     await DbSeeder.SeedAsync(services);
 }
 

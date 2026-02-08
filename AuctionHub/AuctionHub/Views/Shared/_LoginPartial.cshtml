@@ -20,12 +20,12 @@
             <div class="avatar-xs bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
                 <i class="bi bi-person-fill"></i>
             </div>
-            <span class="fw-bold d-none d-lg-inline">@User.Identity?.Name</span>
+            <span class="fw-bold d-none d-lg-inline">@currentUser?.DisplayName</span>
         </a>
         <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 mt-3 py-2" aria-labelledby="userDropdown" style="min-width: 220px;">
             <li class="px-3 py-2 border-bottom mb-2 d-lg-none">
                 <span class="text-muted small">Signed in as</span>
-                <div class="fw-bold text-truncate">@User.Identity?.Name</div>
+                <div class="fw-bold text-truncate">@currentUser?.DisplayName</div>
             </li>
             
             @if (User.IsInRole("Administrator"))
