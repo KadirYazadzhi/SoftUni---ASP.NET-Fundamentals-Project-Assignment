@@ -3,23 +3,25 @@
     ViewData["Title"] = "Create Category";
 }
 
-<div class="row justify-content-center">
+<div class="row justify-content-center animate-fade-up">
     <div class="col-md-6">
-        <div class="card bg-white text-dark border-0 shadow-sm">
-            <div class="card-header bg-transparent border-0 pt-4">
-                <h3 class="mb-0">Create New Category</h3>
+        <div class="card border-0 shadow-sm rounded-5 overflow-hidden">
+            <div class="card-header bg-primary text-white p-4 border-0">
+                <h4 class="mb-0 fw-bold"><i class="bi bi-folder-plus me-2"></i> Create Category</h4>
             </div>
-            <div class="card-body">
+            <div class="card-body p-4 p-lg-5">
                 <form asp-action="Create">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <div class="mb-3">
-                        <label asp-for="Name" class="form-label"></label>
-                        <input asp-for="Name" class="form-control" placeholder="Enter category name" />
-                        <span asp-validation-for="Name" class="text-danger"></span>
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    
+                    <div class="mb-4">
+                        <label asp-for="Name" class="form-label text-muted small fw-bold text-uppercase">Category Name</label>
+                        <input asp-for="Name" class="form-control form-control-lg bg-light border-0 rounded-pill px-4" placeholder="e.g. Vintage Electronics" autofocus />
+                        <span asp-validation-for="Name" class="text-danger small ms-3"></span>
                     </div>
-                    <div class="d-flex justify-content-between">
-                        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
-                        <button type="submit" class="btn btn-primary px-4">Create</button>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-sm hover-lift">Create Category</button>
+                        <a asp-action="Index" class="btn btn-light btn-lg rounded-pill text-muted">Cancel</a>
                     </div>
                 </form>
             </div>

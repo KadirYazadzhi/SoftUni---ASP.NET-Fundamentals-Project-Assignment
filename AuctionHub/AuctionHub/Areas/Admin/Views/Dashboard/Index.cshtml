@@ -2,74 +2,95 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<h2 class="mb-4">Administrative Overview</h2>
+<div class="d-flex justify-content-between align-items-center mb-5 animate-fade-up">
+    <div>
+        <h2 class="fw-bold mb-1">Admin Dashboard</h2>
+        <p class="text-muted mb-0">System overview and quick actions.</p>
+    </div>
+    <span class="badge bg-primary rounded-pill px-3 py-2">System Status: Online</span>
+</div>
 
-<div class="row g-4">
-    <div class="col-md-3">
-        <div class="card bg-primary text-white border-0 shadow-sm h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="card-subtitle mb-2 opacity-75">Total Users</h6>
-                        <h2 class="card-title mb-0">@ViewBag.TotalUsers</h2>
-                    </div>
-                    <i class="bi bi-people-fill fs-1 opacity-50"></i>
+<div class="row g-4 mb-5">
+    <!-- Total Users -->
+    <div class="col-md-3 animate-fade-up delay-100">
+        <div class="card border-0 shadow-sm rounded-5 h-100 overflow-hidden text-white" style="background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);">
+            <div class="card-body p-4 position-relative">
+                <div class="position-absolute top-0 end-0 m-3 opacity-25">
+                    <i class="bi bi-people-fill fs-1"></i>
                 </div>
+                <h6 class="text-uppercase letter-spacing-1 opacity-75 mb-3">Total Users</h6>
+                <h2 class="display-4 fw-bold mb-0">@ViewBag.TotalUsers</h2>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card bg-success text-white border-0 shadow-sm h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="card-subtitle mb-2 opacity-75">Active Auctions</h6>
-                        <h2 class="card-title mb-0">@ViewBag.ActiveAuctions</h2>
-                    </div>
-                    <i class="bi bi-hammer fs-1 opacity-50"></i>
+
+    <!-- Active Auctions -->
+    <div class="col-md-3 animate-fade-up delay-200">
+        <div class="card border-0 shadow-sm rounded-5 h-100 overflow-hidden text-white" style="background: linear-gradient(135deg, #2ec4b6 0%, #208b81 100%);">
+            <div class="card-body p-4 position-relative">
+                <div class="position-absolute top-0 end-0 m-3 opacity-25">
+                    <i class="bi bi-hammer fs-1"></i>
                 </div>
+                <h6 class="text-uppercase letter-spacing-1 opacity-75 mb-3">Active Auctions</h6>
+                <h2 class="display-4 fw-bold mb-0">@ViewBag.ActiveAuctions</h2>
+                <small class="opacity-75">out of @ViewBag.TotalAuctions total</small>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card bg-info text-white border-0 shadow-sm h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="card-subtitle mb-2 opacity-75">Total Bids</h6>
-                        <h2 class="card-title mb-0">@ViewBag.TotalBids</h2>
-                    </div>
-                    <i class="bi bi-graph-up-arrow fs-1 opacity-50"></i>
+
+    <!-- Total Bids -->
+    <div class="col-md-3 animate-fade-up delay-300">
+        <div class="card border-0 shadow-sm rounded-5 h-100 overflow-hidden text-white" style="background: linear-gradient(135deg, #f72585 0%, #b5179e 100%);">
+            <div class="card-body p-4 position-relative">
+                <div class="position-absolute top-0 end-0 m-3 opacity-25">
+                    <i class="bi bi-graph-up-arrow fs-1"></i>
                 </div>
+                <h6 class="text-uppercase letter-spacing-1 opacity-75 mb-3">Total Bids</h6>
+                <h2 class="display-4 fw-bold mb-0">@ViewBag.TotalBids</h2>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card bg-warning text-dark border-0 shadow-sm h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="card-subtitle mb-2 opacity-75">Economy Size</h6>
-                        <h2 class="card-title mb-0">@ViewBag.TotalWalletBalance.ToString("C")</h2>
-                    </div>
-                    <i class="bi bi-cash-coin fs-1 opacity-50"></i>
+
+    <!-- Economy -->
+    <div class="col-md-3 animate-fade-up delay-400">
+        <div class="card border-0 shadow-sm rounded-5 h-100 overflow-hidden text-white" style="background: linear-gradient(135deg, #ff9e00 0%, #ff5400 100%);">
+            <div class="card-body p-4 position-relative">
+                <div class="position-absolute top-0 end-0 m-3 opacity-25">
+                    <i class="bi bi-cash-coin fs-1"></i>
                 </div>
+                <h6 class="text-uppercase letter-spacing-1 opacity-75 mb-3">Economy Size</h6>
+                <h2 class="display-6 fw-bold mb-0">@ViewBag.TotalWalletBalance.ToString("C0")</h2>
             </div>
         </div>
     </div>
 </div>
 
-<div class="mt-5">
-    <h3>Quick Actions</h3>
-    <div class="row mt-3">
-        <div class="col-md-4">
-            <a asp-controller="Auctions" asp-action="Index" class="btn btn-outline-light btn-lg w-100 p-4">
-                <i class="bi bi-search me-2"></i> Audit All Auctions
+<div class="row g-4 animate-fade-up delay-500">
+    <div class="col-md-6">
+        <div class="p-5 bg-light rounded-5 h-100 border-0">
+            <div class="d-flex align-items-center mb-4">
+                <div class="icon-box-md bg-white text-primary rounded-circle shadow-sm d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                    <i class="bi bi-search"></i>
+                </div>
+                <h4 class="fw-bold mb-0">Auction Audit</h4>
+            </div>
+            <p class="text-muted mb-4">Review all auctions, including closed ones. Delete inappropriate listings regardless of bid status.</p>
+            <a asp-controller="Auctions" asp-action="Index" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
+                Manage Auctions <i class="bi bi-arrow-right ms-2"></i>
             </a>
         </div>
-        <div class="col-md-4">
-            <a asp-controller="Categories" asp-action="Index" class="btn btn-outline-light btn-lg w-100 p-4">
-                <i class="bi bi-folder-plus me-2"></i> Manage Categories
+    </div>
+    <div class="col-md-6">
+        <div class="p-5 bg-light rounded-5 h-100 border-0">
+            <div class="d-flex align-items-center mb-4">
+                <div class="icon-box-md bg-white text-primary rounded-circle shadow-sm d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                    <i class="bi bi-tags"></i>
+                </div>
+                <h4 class="fw-bold mb-0">Category Management</h4>
+            </div>
+            <p class="text-muted mb-4">Add, edit, or remove auction categories. Ensure your marketplace remains organized.</p>
+            <a asp-controller="Categories" asp-action="Index" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
+                Manage Categories <i class="bi bi-arrow-right ms-2"></i>
             </a>
         </div>
     </div>

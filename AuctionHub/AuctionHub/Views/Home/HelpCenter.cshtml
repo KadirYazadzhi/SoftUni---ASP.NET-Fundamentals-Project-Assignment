@@ -6,16 +6,27 @@
     <div class="text-center mb-5 animate-fade-up">
         <span class="badge bg-primary-subtle text-primary mb-3 px-4 py-2 rounded-pill">Support</span>
         <h1 class="display-4 fw-bold mb-3">How can we help?</h1>
-        <p class="lead text-muted mx-auto" style="max-width: 600px;">Explore our documentation or browse common questions below.</p>
+        <p class="lead text-muted mx-auto mb-4" style="max-width: 600px;">Explore our documentation or browse common questions below.</p>
+        
+        <!-- Search Bar (Added back/enhanced) -->
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="input-group input-group-lg shadow-sm rounded-pill overflow-hidden border">
+                    <span class="input-group-text bg-white border-0 ps-4"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" class="form-control border-0 px-2" placeholder="Search for help articles...">
+                    <button class="btn btn-primary px-4 fw-bold" type="button">Search</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <div class="accordion accordion-flush rounded-5 shadow-sm overflow-hidden border bg-white" id="helpAccordion">
+            <div class="accordion rounded-5 shadow-sm overflow-hidden border bg-white" id="helpAccordion">
                 <!-- FAQ Item 1 -->
-                <div class="accordion-item border-bottom">
+                <div class="accordion-item border-0 border-bottom">
                     <h2 class="accordion-header">
-                        <button class="accordion-button collapsed py-4 px-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                        <button class="accordion-button collapsed py-4 px-4 fw-bold bg-transparent shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
                             How do I place a bid?
                         </button>
                     </h2>
@@ -26,9 +37,9 @@
                     </div>
                 </div>
                 <!-- FAQ Item 2 -->
-                <div class="accordion-item border-bottom">
+                <div class="accordion-item border-0 border-bottom">
                     <h2 class="accordion-header">
-                        <button class="accordion-button collapsed py-4 px-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                        <button class="accordion-button collapsed py-4 px-4 fw-bold bg-transparent shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
                             What is "Buy It Now"?
                         </button>
                     </h2>
@@ -39,9 +50,9 @@
                     </div>
                 </div>
                 <!-- FAQ Item 3 -->
-                <div class="accordion-item border-bottom">
+                <div class="accordion-item border-0 border-bottom">
                     <h2 class="accordion-header">
-                        <button class="accordion-button collapsed py-4 px-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                        <button class="accordion-button collapsed py-4 px-4 fw-bold bg-transparent shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
                             How do I add funds to my wallet?
                         </button>
                     </h2>
@@ -52,9 +63,9 @@
                     </div>
                 </div>
                 <!-- FAQ Item 4 -->
-                <div class="accordion-item">
+                <div class="accordion-item border-0">
                     <h2 class="accordion-header">
-                        <button class="accordion-button collapsed py-4 px-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                        <button class="accordion-button collapsed py-4 px-4 fw-bold bg-transparent shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
                             What happens if I'm outbid?
                         </button>
                     </h2>
@@ -77,3 +88,18 @@
         </div>
     </div>
 </div>
+
+<style>
+    .accordion-button:not(.collapsed) {
+        color: var(--bs-primary);
+        background-color: rgba(var(--bs-primary-rgb), 0.05);
+    }
+    .accordion-item:first-of-type .accordion-button {
+        border-top-left-radius: calc(2rem - 1px);
+        border-top-right-radius: calc(2rem - 1px);
+    }
+    .accordion-item:last-of-type .accordion-button.collapsed {
+        border-bottom-left-radius: calc(2rem - 1px);
+        border-bottom-right-radius: calc(2rem - 1px);
+    }
+</style>
