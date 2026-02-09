@@ -7,10 +7,12 @@ namespace AuctionHub.Areas.Admin.Controllers;
 public class DashboardController : AdminBaseController
 {
     private readonly AuctionHubDbContext _context;
+    private readonly Services.INotificationService _notificationService;
 
-    public DashboardController(AuctionHubDbContext context)
+    public DashboardController(AuctionHubDbContext context, Services.INotificationService notificationService)
     {
         _context = context;
+        _notificationService = notificationService;
     }
 
     public async Task<IActionResult> Index()
@@ -28,5 +30,19 @@ public class DashboardController : AdminBaseController
         ViewBag.TotalWalletBalance = totalWalletBalance;
 
         return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> SendAnnouncement(string message)
+    {
+        if (string.IsNullOrWhiteSpace(message))
+        {
+            TempData["Error"] = "Message cannot be empty.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        await _notificationService.NotifyAllUsersAsync($"📢 SYSTEM: {message}");
+        TempData["Success"] = "Announcement sent to all users.";
+        return RedirectToAction(nameof(Index));
     }
 }

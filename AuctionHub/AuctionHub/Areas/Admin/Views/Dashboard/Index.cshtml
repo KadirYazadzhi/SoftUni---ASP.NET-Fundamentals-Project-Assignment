@@ -65,33 +65,48 @@
     </div>
 </div>
 
-<div class="row g-4 animate-fade-up delay-500">
-    <div class="col-md-6">
-        <div class="p-5 bg-light rounded-5 h-100 border-0">
-            <div class="d-flex align-items-center mb-4">
-                <div class="icon-box-md bg-white text-primary rounded-circle shadow-sm d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
-                    <i class="bi bi-search"></i>
+<!-- Quick Actions -->
+<div class="row g-4 animate-fade-up delay-500 mb-5">
+    <div class="col-md-4">
+        <div class="p-4 bg-white rounded-5 shadow-sm h-100 border-0">
+            <div class="d-flex align-items-center mb-3">
+                <div class="icon-box-md bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                    <i class="bi bi-megaphone-fill"></i>
                 </div>
-                <h4 class="fw-bold mb-0">Auction Audit</h4>
+                <h5 class="fw-bold mb-0">Global Announcement</h5>
             </div>
-            <p class="text-muted mb-4">Review all auctions, including closed ones. Delete inappropriate listings regardless of bid status.</p>
-            <a asp-controller="Auctions" asp-action="Index" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
-                Manage Auctions <i class="bi bi-arrow-right ms-2"></i>
-            </a>
+            <form asp-action="SendAnnouncement" method="post">
+                <div class="mb-3">
+                    <textarea name="message" class="form-control bg-light border-0 rounded-4" rows="3" placeholder="Type message to all users..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 rounded-pill shadow-sm">Send Notification</button>
+            </form>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="p-5 bg-light rounded-5 h-100 border-0">
-            <div class="d-flex align-items-center mb-4">
-                <div class="icon-box-md bg-white text-primary rounded-circle shadow-sm d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
-                    <i class="bi bi-tags"></i>
+    
+    <div class="col-md-4">
+        <div class="p-4 bg-white rounded-5 shadow-sm h-100 border-0">
+            <div class="d-flex align-items-center mb-3">
+                <div class="icon-box-md bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                    <i class="bi bi-people-fill"></i>
                 </div>
-                <h4 class="fw-bold mb-0">Category Management</h4>
+                <h5 class="fw-bold mb-0">User Management</h5>
             </div>
-            <p class="text-muted mb-4">Add, edit, or remove auction categories. Ensure your marketplace remains organized.</p>
-            <a asp-controller="Categories" asp-action="Index" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
-                Manage Categories <i class="bi bi-arrow-right ms-2"></i>
-            </a>
+            <p class="text-muted small mb-4">View user details, history, and manage access rights or balances.</p>
+            <a asp-controller="Users" asp-action="Index" class="btn btn-outline-success w-100 rounded-pill fw-bold">Manage Users</a>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="p-4 bg-white rounded-5 shadow-sm h-100 border-0">
+            <div class="d-flex align-items-center mb-3">
+                <div class="icon-box-md bg-warning-subtle text-warning rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                    <i class="bi bi-journal-text"></i>
+                </div>
+                <h5 class="fw-bold mb-0">Transaction Logs</h5>
+            </div>
+            <p class="text-muted small mb-4">Audit financial flows and review transaction history in real-time.</p>
+            <a asp-controller="Transactions" asp-action="Index" class="btn btn-outline-warning w-100 rounded-pill fw-bold">View Ledger</a>
         </div>
     </div>
 </div>
