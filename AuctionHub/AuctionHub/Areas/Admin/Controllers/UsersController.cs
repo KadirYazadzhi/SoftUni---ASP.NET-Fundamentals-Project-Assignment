@@ -45,22 +45,39 @@ public class UsersController : AdminBaseController
     [HttpPost]
     public async Task<IActionResult> UpdateBalance(string userId, decimal amount, string reason)
     {
-        var user = await _context.Users.FindAsync(userId);
-        if (user == null) return NotFound();
-
-        user.WalletBalance += amount;
-        
-        _context.Transactions.Add(new Transaction
+        using var transaction = await _context.Database.BeginTransactionAsync();
+        try
         {
-            UserId = user.Id,
-            Amount = amount,
-            TransactionType = amount >= 0 ? "AdminBonus" : "AdminPenalty",
-            Description = string.IsNullOrEmpty(reason) ? "Administrative adjustment" : reason,
-            TransactionDate = DateTime.UtcNow
-        });
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null) return NotFound();
 
-        await _context.SaveChangesAsync();
-        TempData["Success"] = $"Balance updated. New balance: {user.WalletBalance:C}";
+            user.WalletBalance += amount;
+            
+            _context.Transactions.Add(new Transaction
+            {
+                UserId = user.Id,
+                Amount = amount,
+                TransactionType = amount >= 0 ? "AdminBonus" : "AdminPenalty",
+                Description = string.IsNullOrEmpty(reason) ? "Administrative adjustment" : reason,
+                TransactionDate = DateTime.UtcNow
+            });
+
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            TempData["Success"] = $"Balance updated. New balance: {user.WalletBalance:C}";
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            await transaction.RollbackAsync();
+            TempData["Error"] = "Concurrency error: The user's balance was modified by another process. Please try again.";
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            TempData["Error"] = "An error occurred while updating the balance.";
+        }
+
         return RedirectToAction(nameof(Details), new { id = userId });
     }
 
