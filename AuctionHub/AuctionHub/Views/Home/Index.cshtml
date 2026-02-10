@@ -187,21 +187,108 @@
     </div>
 </section>
 
-<!-- CTA -->
-<section class="py-5">
+<!-- FAQ Section -->
+<section class="py-6 border-top">
     <div class="container">
-        <div class="bg-primary rounded-xl p-5 text-center text-white position-relative overflow-hidden">
-            <div class="position-relative z-2">
-                <h2 class="fw-bold mb-3">Ready to start selling?</h2>
-                <p class="lead mb-4 opacity-75">Join thousands of successful sellers on AuctionHub today.</p>
-                <a asp-controller="Auctions" asp-action="Create" class="btn btn-light text-primary fw-bold rounded-pill px-5 py-3">
-                    Create Listing
-                </a>
+        <div class="row align-items-center g-5">
+            <!-- Left Column: FAQ Accordion -->
+            <div class="col-lg-6 animate-fade-up">
+                <span class="badge bg-primary-subtle text-primary mb-3 px-4 py-2 rounded-pill">FAQ</span>
+                <h2 class="fw-bold mb-5 display-5">Common Questions</h2>
+                
+                <div class="accordion custom-faq" id="homeFaq">
+                    <!-- Q1 -->
+                    <div class="accordion-item border-0 border-bottom mb-2">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed py-4 px-0 bg-transparent fw-bold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#q1">
+                                Is it safe to bid on AuctionHub?
+                            </button>
+                        </h2>
+                        <div id="q1" class="accordion-collapse collapse" data-bs-parent="#homeFaq">
+                            <div class="accordion-body px-0 pt-0 text-muted pb-4">
+                                Yes, absolutely. We use a secure escrow system where your funds are held safely until the transaction is verified. Every user is verified to ensure a trustworthy community.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Q2 -->
+                    <div class="accordion-item border-0 border-bottom mb-2">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed py-4 px-0 bg-transparent fw-bold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#q2">
+                                How do I get my money back if I'm outbid?
+                            </button>
+                        </h2>
+                        <div id="q2" class="accordion-collapse collapse" data-bs-parent="#homeFaq">
+                            <div class="accordion-body px-0 pt-0 text-muted pb-4">
+                                The system handles this automatically. The moment another user places a higher bid, the full amount of your previous bid is instantly credited back to your AuctionHub wallet.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Q3 -->
+                    <div class="accordion-item border-0 border-bottom mb-2">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed py-4 px-0 bg-transparent fw-bold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#q3">
+                                Can I cancel a bid after placing it?
+                            </h2>
+                        </h2>
+                        <div id="q3" class="accordion-collapse collapse" data-bs-parent="#homeFaq">
+                            <div class="accordion-body px-0 pt-0 text-muted pb-4">
+                                In order to maintain the integrity of the auctions, bids are legally binding and cannot be canceled once placed. We encourage users to bid responsibly.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Q4 -->
+                    <div class="accordion-item border-0 border-bottom mb-2">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed py-4 px-0 bg-transparent fw-bold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#q4">
+                                How do I sell an item?
+                            </button>
+                        </h2>
+                        <div id="q4" class="accordion-collapse collapse" data-bs-parent="#homeFaq">
+                            <div class="accordion-body px-0 pt-0 text-muted pb-4">
+                                Simply click the "Sell Item" button in the navbar, fill in the details about your item, set your starting price, and upload a clear photo. Your listing will go live instantly.
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="position-absolute top-0 start-0 w-100 h-100 bg-white opacity-10" style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 20px 20px;"></div>
+
+            <!-- Right Column: Image (Matching How It Works style) -->
+            <div class="col-lg-6 animate-fade-up delay-200">
+                <div class="p-5 bg-light rounded-xl text-center shadow-soft">
+                    <img src="~/images/how-it-work.svg" class="img-fluid" style="max-height: 400px;" alt="FAQ Illustration" />
+                </div>
+            </div>
         </div>
     </div>
 </section>
+
+<style>
+    /* FAQ Accordion Styling */
+    .custom-faq .accordion-button::after {
+        background-image: none;
+        content: '+';
+        font-family: 'Inter', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 300;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s ease;
+        color: var(--bs-primary);
+    }
+
+    .custom-faq .accordion-button:not(.collapsed)::after {
+        transform: rotate(45deg);
+        color: var(--bs-danger);
+    }
+
+    .custom-faq .accordion-button:not(.collapsed) {
+        color: var(--bs-primary);
+    }
+</style>
 
 <style>
     .transition-all { transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); }
