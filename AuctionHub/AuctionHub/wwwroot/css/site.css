@@ -196,8 +196,24 @@ footer {
 .text-muted-custom { color: var(--text-muted) !important; }
 .shadow-soft { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
 .rounded-xl { border-radius: var(--radius-xl) !important; }
-.rounded-4 { border-radius: 1rem !important; }
-.rounded-5 { border-radius: 2rem !important; }
+.rounded-4 { border-radius: 0.75rem !important; }
+.rounded-5 { border-radius: 1rem !important; }
+
+/* Avatar sizes */
+.avatar-xs, .avatar-sm, .avatar-md, .avatar-lg, .avatar-xl {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 50% !important;
+    overflow: hidden;
+}
+
+.avatar-xs { width: 32px; height: 32px; }
+.avatar-sm { width: 48px; height: 48px; }
+.avatar-md { width: 64px; height: 64px; }
+.avatar-lg { width: 80px; height: 80px; }
+.avatar-xl { width: 120px; height: 120px; }
 
 /* Form Controls */
 .form-control, .form-select {
