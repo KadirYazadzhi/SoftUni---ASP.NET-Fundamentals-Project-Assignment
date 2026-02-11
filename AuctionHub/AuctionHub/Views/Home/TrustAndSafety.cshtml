@@ -5,7 +5,7 @@
 <div class="container py-5">
     <div class="row align-items-center mb-5 animate-fade-up">
         <div class="col-lg-6">
-            <span class="badge bg-primary-subtle text-primary mb-3 px-4 py-2 rounded-pill">Security First</span>
+            <span class="badge bg-primary-subtle text-primary mb-3 px-4 py-2 rounded-pill fw-bold">Security First</span>
             <h1 class="display-4 fw-bold mb-4">Your safety is our <span class="text-primary">top priority</span>.</h1>
             <p class="lead text-muted">We use industry-leading technology and rigorous manual verification to keep our marketplace secure and transparent for everyone.</p>
         </div>
@@ -18,30 +18,30 @@
 
     <div class="row g-4 animate-fade-up delay-100">
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-5 h-100 p-5 bg-white text-center">
-                <div class="icon-box-md bg-primary text-white rounded-circle mb-4 mx-auto d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+            <div class="card trust-card border-0 shadow-sm rounded-5 h-100 p-5 bg-white text-center transition-all">
+                <div class="icon-box-md bg-primary text-white rounded-circle mb-4 mx-auto d-flex align-items-center justify-content-center transition-all" style="width: 60px; height: 60px;">
                     <i class="bi bi-wallet2 fs-3"></i>
                 </div>
-                <h4 class="fw-bold mb-3">Secure Escrow</h4>
-                <p class="text-muted small mb-0">All bid funds are held in a secure escrow system. Funds are only transferred to the seller once the item is confirmed as received and accurate.</p>
+                <h4 class="fw-bold mb-3 transition-all">Secure Escrow</h4>
+                <p class="text-muted small mb-0 transition-all">All bid funds are held in a secure escrow system. Funds are only transferred to the seller once the item is confirmed as received and accurate.</p>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-5 h-100 p-5 bg-white text-center">
-                <div class="icon-box-md bg-primary text-white rounded-circle mb-4 mx-auto d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+            <div class="card trust-card border-0 shadow-sm rounded-5 h-100 p-5 bg-white text-center transition-all">
+                <div class="icon-box-md bg-primary text-white rounded-circle mb-4 mx-auto d-flex align-items-center justify-content-center transition-all" style="width: 60px; height: 60px;">
                     <i class="bi bi-person-check fs-3"></i>
                 </div>
-                <h4 class="fw-bold mb-3">Verified Users</h4>
-                <p class="text-muted small mb-0">We verify identities and maintain a strict behavior-based reporting system. Bad actors are permanently removed to ensure a clean community.</p>
+                <h4 class="fw-bold mb-3 transition-all">Verified Users</h4>
+                <p class="text-muted small mb-0 transition-all">We verify identities and maintain a strict behavior-based reporting system. Bad actors are permanently removed to ensure a clean community.</p>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-5 h-100 p-5 bg-white text-center">
-                <div class="icon-box-md bg-primary text-white rounded-circle mb-4 mx-auto d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+            <div class="card trust-card border-0 shadow-sm rounded-5 h-100 p-5 bg-white text-center transition-all">
+                <div class="icon-box-md bg-primary text-white rounded-circle mb-4 mx-auto d-flex align-items-center justify-content-center transition-all" style="width: 60px; height: 60px;">
                     <i class="bi bi-eye fs-3"></i>
                 </div>
-                <h4 class="fw-bold mb-3">Auction Audits</h4>
-                <p class="text-muted small mb-0">Our administration team manually reviews listings and bidding patterns to detect and prevent fraud, shilling, or deceptive descriptions.</p>
+                <h4 class="fw-bold mb-3 transition-all">Auction Audits</h4>
+                <p class="text-muted small mb-0 transition-all">Our administration team manually reviews listings and bidding patterns to detect and prevent fraud, shilling, or deceptive descriptions.</p>
             </div>
         </div>
     </div>
@@ -53,8 +53,33 @@
                 <p class="text-muted mb-0">If you encounter any suspicious activity or have a dispute with a transaction, our safety team is here to help.</p>
             </div>
             <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                <a asp-action="About" class="btn btn-primary rounded-pill px-5 py-3 fw-bold shadow-sm">Report Activity</a>
+                <a asp-action="About" class="btn btn-primary rounded-pill px-5 py-3 fw-bold shadow-sm hover-lift">Report Activity</a>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .transition-all { transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); }
+    
+    .trust-card {
+        cursor: pointer;
+    }
+
+    .trust-card:hover {
+        background-color: var(--bs-primary) !important;
+        transform: translateY(-10px);
+        box-shadow: 0 1rem 3rem rgba(67, 97, 238, 0.15) !important;
+    }
+
+    .trust-card:hover h4, 
+    .trust-card:hover p {
+        color: white !important;
+    }
+
+    .trust-card:hover .icon-box-md {
+        background-color: white !important;
+        color: var(--bs-primary) !important;
+        transform: scale(1.1);
+    }
+</style>

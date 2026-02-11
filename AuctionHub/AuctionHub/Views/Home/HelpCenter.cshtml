@@ -79,11 +79,19 @@
 
             <div class="mt-5 p-5 bg-primary rounded-5 text-white text-center shadow-lg animate-fade-up delay-100 position-relative overflow-hidden">
                 <div class="position-relative z-2">
-                    <h3 class="fw-bold mb-3">Still need help?</h3>
-                    <p class="mb-4 opacity-75">Our support team is available to assist you with any issues.</p>
-                    <a asp-action="About" class="btn btn-light text-primary rounded-pill px-5 py-3 fw-bold hover-lift shadow-sm">Contact Support</a>
+                    <h3 class="fw-bold mb-3 text-white">Still need help?</h3>
+                    <p class="mb-4 opacity-75 text-white">Our support team is available to assist you with any issues.</p>
+                    <a asp-action="About" class="btn btn-light text-primary rounded-pill px-5 py-3 fw-bold hover-lift shadow-sm mb-4">Contact Support</a>
+                    
+                    <div class="d-flex justify-content-center align-items-center gap-4 mt-2">
+                        <div class="small opacity-75 d-flex align-items-center">
+                            <i class="bi bi-clock-history me-2"></i> Avg. response: < 2 hours
+                        </div>
+                        <div class="small opacity-75 d-flex align-items-center">
+                            <i class="bi bi-chat-heart me-2"></i> 24/7 Priority Support
+                        </div>
+                    </div>
                 </div>
-                <div class="position-absolute top-0 start-0 w-100 h-100 opacity-10 bg-white" style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 20px 20px;"></div>
             </div>
         </div>
     </div>
