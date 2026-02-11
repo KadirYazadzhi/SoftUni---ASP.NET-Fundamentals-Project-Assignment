@@ -1,4 +1,4 @@
-# User-specific documentation (Ignored as per request)
+# User-specific documentation
 PROJECT_PLAN.md
 softuni-goals.md
 project-goals.md
@@ -23,10 +23,17 @@ project-goals.md
 # OS generated files
 .DS_Store
 Thumbs.db
+._*
 
-# Environment variables
+# Environment variables & Secrets
+appsettings.json
 appsettings.Development.json
 .env
 
 # Logs
 *.log
+
+# Temporary Files
+*.tmp
+*.bak
+*.swp

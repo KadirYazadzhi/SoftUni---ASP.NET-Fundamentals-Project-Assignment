@@ -21,7 +21,7 @@ builder.Services.AddDbContext<AuctionHubDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddScoped<IAuctionService, AuctionService>();
-builder.Services.AddSingleton<INotificationService, NotificationService>(); // Singleton or Scoped depending on usage. Let's stick to Singleton as it creates its own scope.
+builder.Services.AddSingleton<INotificationService, NotificationService>();
 builder.Services.AddHostedService<AuctionCleanupService>();
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => {
