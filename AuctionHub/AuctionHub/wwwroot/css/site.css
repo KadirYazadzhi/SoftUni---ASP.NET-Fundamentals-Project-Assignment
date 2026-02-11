@@ -25,21 +25,116 @@
     --text-muted: #94a3b8;
     --bg-light: #0f172a;
     --bg-white: #1e293b;
-    --glass-bg: rgba(15, 23, 42, 0.85); /* Fixed: Was referencing non-existent var or wrong color */
-    --border-color: #334155;
+    --glass-bg: rgba(15, 23, 42, 0.85); 
+    --border-color: rgba(255, 255, 255, 0.1);
 }
 
-[data-bs-theme="dark"] .bg-white {
+/* Global Dark Mode Fixes for Bootstrap Utilities */
+[data-bs-theme="dark"] body {
+    background-color: var(--bg-light);
+    color: var(--text-main);
+}
+
+[data-bs-theme="dark"] .bg-white,
+[data-bs-theme="dark"] .card,
+[data-bs-theme="dark"] .admin-content-card,
+[data-bs-theme="dark"] .bg-card {
     background-color: var(--bg-white) !important;
-    color: var(--text-main) !important;
-}
-
-[data-bs-theme="dark"] .text-dark {
+    border-color: var(--border-color) !important;
     color: var(--text-main) !important;
 }
 
 [data-bs-theme="dark"] .bg-light {
-    background-color: #111827 !important; /* Slightly lighter than pure dark */
+    background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+[data-bs-theme="dark"] .text-dark,
+[data-bs-theme="dark"] .text-black,
+[data-bs-theme="dark"] .navbar-light .navbar-nav .nav-link {
+    color: var(--text-main) !important;
+}
+
+[data-bs-theme="dark"] .text-muted,
+[data-bs-theme="dark"] .text-secondary {
+    color: var(--text-muted) !important;
+}
+
+[data-bs-theme="dark"] .border,
+[data-bs-theme="dark"] .border-bottom,
+[data-bs-theme="dark"] .border-top,
+[data-bs-theme="dark"] .border-start,
+[data-bs-theme="dark"] .border-end {
+    border-color: var(--border-color) !important;
+}
+
+[data-bs-theme="dark"] .table {
+    color: var(--text-main) !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-bs-theme="dark"] .table thead th,
+[data-bs-theme="dark"] .bg-light.bg-opacity-10 {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+[data-bs-theme="dark"] .list-group-item {
+    background-color: transparent !important;
+    color: var(--text-main) !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-bs-theme="dark"] .form-control,
+[data-bs-theme="dark"] .form-select {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-main) !important;
+}
+
+[data-bs-theme="dark"] .form-control:focus {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-bs-theme="dark"] .modal-content {
+    background-color: var(--bg-white) !important;
+    border: 1px solid var(--border-color);
+}
+
+[data-bs-theme="dark"] .breadcrumb-item.active {
+    color: var(--text-muted);
+}
+
+[data-bs-theme="dark"] .bg-primary-subtle { background-color: rgba(79, 70, 229, 0.2) !important; color: #a5b4fc !important; }
+[data-bs-theme="dark"] .bg-success-subtle { background-color: rgba(34, 197, 94, 0.2) !important; color: #86efac !important; }
+[data-bs-theme="dark"] .bg-warning-subtle { background-color: rgba(234, 179, 8, 0.2) !important; color: #fde047 !important; }
+[data-bs-theme="dark"] .bg-danger-subtle { background-color: rgba(239, 68, 68, 0.2) !important; color: #fca5a5 !important; }
+[data-bs-theme="dark"] .bg-info-subtle { background-color: rgba(6, 182, 212, 0.2) !important; color: #67e8f9 !important; }
+
+[data-bs-theme="dark"] .shadow-sm { box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.5) !important; }
+[data-bs-theme="dark"] .shadow { box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5) !important; }
+[data-bs-theme="dark"] .shadow-lg { box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.5) !important; }
+
+/* Custom elements fix */
+[data-bs-theme="dark"] .timeline .bg-white {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+[data-bs-theme="dark"] .icon-box-sm.bg-white {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-bs-theme="dark"] .accordion-item,
+[data-bs-theme="dark"] .accordion-button {
+    background-color: var(--bg-white) !important;
+    color: var(--text-main) !important;
+}
+
+[data-bs-theme="dark"] .accordion-button:after {
+    filter: brightness(0) invert(1);
+}
+
+[data-bs-theme="dark"] .input-group-text.bg-white {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-color: var(--border-color) !important;
 }
 
 body {

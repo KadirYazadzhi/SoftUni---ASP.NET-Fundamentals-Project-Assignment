@@ -12,48 +12,52 @@
         </p>
     </section>
 
-    <!-- Content Blocks (Now 4 Cards) -->
+    <!-- Content Blocks (Now 4 Cards with Hover Inversion) -->
     <div class="row g-4 mb-5">
+        <!-- Card 1: AuctionHub -->
         <div class="col-md-6 col-xl-3 animate-fade-up delay-100">
-            <div class="card border-0 shadow-sm rounded-5 h-100 p-4 bg-white hover-lift" style="cursor: pointer;">
-                <div class="icon-box-md bg-primary text-white rounded-circle mb-4 d-flex align-items-center justify-content-center mx-auto" style="width: 60px; height: 60px;">
+            <div class="card about-card border-0 shadow-sm rounded-5 h-100 p-4 bg-white transition-all" style="cursor: pointer;">
+                <div class="icon-box-md bg-primary text-white rounded-circle mb-4 d-flex align-items-center justify-content-center mx-auto transition-all" style="width: 60px; height: 60px;">
                     <i class="bi bi-rocket-takeoff-fill fs-3"></i>
                 </div>
-                <h5 class="fw-bold mb-3 text-center">What is AuctionHub?</h5>
-                <p class="text-muted small text-center">
+                <h5 class="fw-bold mb-3 text-center transition-all">What is AuctionHub?</h5>
+                <p class="text-muted small text-center transition-all">
                     A premium online auction platform designed for both seasoned collectors and casual enthusiasts.
                 </p>
             </div>
         </div>
+        <!-- Card 2: Values -->
         <div class="col-md-6 col-xl-3 animate-fade-up delay-200">
-            <div class="card border-0 shadow-sm rounded-5 h-100 p-4 bg-white hover-lift" style="cursor: pointer;">
-                <div class="icon-box-md bg-success text-white rounded-circle mb-4 d-flex align-items-center justify-content-center mx-auto" style="width: 60px; height: 60px;">
+            <div class="card about-card border-0 shadow-sm rounded-5 h-100 p-4 bg-white transition-all" style="cursor: pointer;">
+                <div class="icon-box-md bg-success text-white rounded-circle mb-4 d-flex align-items-center justify-content-center mx-auto transition-all" style="width: 60px; height: 60px;">
                     <i class="bi bi-shield-lock-fill fs-3"></i>
                 </div>
-                <h5 class="fw-bold mb-3 text-center">Our Core Values</h5>
-                <p class="text-muted small text-center">
+                <h5 class="fw-bold mb-3 text-center transition-all">Our Core Values</h5>
+                <p class="text-muted small text-center transition-all">
                     Integrity, security, and community are the pillars. Every bid is protected by our advanced escrow.
                 </p>
             </div>
         </div>
+        <!-- Card 3: Global -->
         <div class="col-md-6 col-xl-3 animate-fade-up delay-300">
-            <div class="card border-0 shadow-sm rounded-5 h-100 p-4 bg-white hover-lift" style="cursor: pointer;">
-                <div class="icon-box-md bg-warning text-white rounded-circle mb-4 d-flex align-items-center justify-content-center mx-auto" style="width: 60px; height: 60px;">
+            <div class="card about-card border-0 shadow-sm rounded-5 h-100 p-4 bg-white transition-all" style="cursor: pointer;">
+                <div class="icon-box-md bg-warning text-white rounded-circle mb-4 d-flex align-items-center justify-content-center mx-auto transition-all" style="width: 60px; height: 60px;">
                     <i class="bi bi-globe-americas fs-3"></i>
                 </div>
-                <h5 class="fw-bold mb-3 text-center">Global Reach</h5>
-                <p class="text-muted small text-center">
+                <h5 class="fw-bold mb-3 text-center transition-all">Global Reach</h5>
+                <p class="text-muted small text-center transition-all">
                     Connecting buyers and sellers from across the globe, facilitating trade of extraordinary items.
                 </p>
             </div>
         </div>
+        <!-- Card 4: Innovation -->
         <div class="col-md-6 col-xl-3 animate-fade-up delay-400">
-            <div class="card border-0 shadow-sm rounded-5 h-100 p-4 bg-white hover-lift" style="cursor: pointer;">
-                <div class="icon-box-md bg-info text-white rounded-circle mb-4 d-flex align-items-center justify-content-center mx-auto" style="width: 60px; height: 60px;">
+            <div class="card about-card border-0 shadow-sm rounded-5 h-100 p-4 bg-white transition-all" style="cursor: pointer;">
+                <div class="icon-box-md bg-info text-white rounded-circle mb-4 d-flex align-items-center justify-content-center mx-auto transition-all" style="width: 60px; height: 60px;">
                     <i class="bi bi-lightbulb-fill fs-3"></i>
                 </div>
-                <h5 class="fw-bold mb-3 text-center">Innovation</h5>
-                <p class="text-muted small text-center">
+                <h5 class="fw-bold mb-3 text-center transition-all">Innovation</h5>
+                <p class="text-muted small text-center transition-all">
                     Constantly evolving our platform with real-time features and secure payment methods.
                 </p>
             </div>
@@ -127,3 +131,29 @@
         </div>
     </section>
 </div>
+
+<style>
+    .transition-all { transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); }
+
+    .about-card:hover {
+        background-color: var(--bs-primary) !important;
+        transform: translateY(-10px);
+        box-shadow: 0 1rem 3rem rgba(67, 97, 238, 0.15) !important;
+    }
+
+    .about-card:hover h5, 
+    .about-card:hover p {
+        color: white !important;
+    }
+
+    .about-card:hover .icon-box-md {
+        background-color: white !important;
+        transform: scale(1.1);
+    }
+
+    /* Restore original icon colors on hover */
+    .about-card:nth-child(1):hover .icon-box-md i { color: var(--bs-primary) !important; }
+    .about-card:nth-child(2):hover .icon-box-md i { color: var(--bs-success) !important; }
+    .about-card:nth-child(3):hover .icon-box-md i { color: var(--bs-warning) !important; }
+    .about-card:nth-child(4):hover .icon-box-md i { color: var(--bs-info) !important; }
+</style>

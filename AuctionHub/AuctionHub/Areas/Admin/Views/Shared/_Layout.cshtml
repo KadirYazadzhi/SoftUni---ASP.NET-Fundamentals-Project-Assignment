@@ -80,37 +80,15 @@
 
 <style>
     /* Fixed color for Admin Header icon always text-primary regardless of theme */
-    .icon-box-lg i {
+    .icon-box-lg i.text-primary {
         color: #4f46e5 !important;
     }
 
-    /* Support for both Light and Dark modes */
-    .admin-nav-link {
-        color: var(--text-muted) !important;
-        background-color: transparent !important;
-    }
-    
-    .admin-nav-link:hover {
-        background-color: rgba(var(--bs-primary-rgb), 0.05) !important;
-        color: var(--bs-primary) !important;
-    }
-
     .active-admin-link {
-        background-color: rgba(var(--bs-primary-rgb), 0.1) !important;
+        background-color: rgba(var(--bs-primary-rgb), 0.15) !important;
         color: var(--bs-primary) !important;
         font-weight: 700 !important;
         border-left: 4px solid var(--bs-primary) !important;
-    }
-
-    /* Card consistency in dark mode */
-    [data-bs-theme="dark"] .admin-content-card,
-    [data-bs-theme="dark"] .admin-sidebar-card {
-        background-color: var(--bg-white) !important;
-        border: 1px solid var(--border-color) !important;
-    }
-
-    [data-bs-theme="dark"] .list-group-item {
-        background-color: transparent !important;
     }
 </style>
 
