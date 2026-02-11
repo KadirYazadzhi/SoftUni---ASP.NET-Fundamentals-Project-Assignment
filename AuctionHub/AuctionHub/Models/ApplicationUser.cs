@@ -34,6 +34,9 @@ public class ApplicationUser : IdentityUser
         }
     }
 
+    [Timestamp]
+    public byte[] RowVersion { get; set; } = null!;
+
     public virtual ICollection<Auction> MyAuctions { get; set; } = new HashSet<Auction>();
     public virtual ICollection<Bid> MyBids { get; set; } = new HashSet<Bid>();
     public virtual ICollection<Transaction> Transactions { get; set; } = new HashSet<Transaction>();

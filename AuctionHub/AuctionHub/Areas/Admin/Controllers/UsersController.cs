@@ -48,6 +48,10 @@ public class UsersController : AdminBaseController
     [HttpPost]
     public async Task<IActionResult> UpdateBalance(string userId, decimal amount, string reason)
     {
+        // Simple transaction is good, but for full concurrency safety we should rely on RowVersion
+        // However, EF Core handles concurrency via DbUpdateConcurrencyException automatically if RowVersion is present in the model.
+        // We just need to catch it, which we already do.
+        
         using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
@@ -55,6 +59,9 @@ public class UsersController : AdminBaseController
             if (user == null) return NotFound();
 
             user.WalletBalance += amount;
+            
+            // Force update of RowVersion
+            _context.Entry(user).Property(u => u.RowVersion).IsModified = true;
             
             _context.Transactions.Add(new Transaction
             {

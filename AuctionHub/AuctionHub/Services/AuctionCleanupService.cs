@@ -63,6 +63,20 @@ public class AuctionCleanupService : BackgroundService
                         await notificationService.NotifyUserAsync(auction.SellerId, 
                             $"💰 Your item '{auction.Title}' was sold to {winningBid.Bidder.DisplayName} for {winningBid.Amount:C}!", 
                             $"/Auctions/Details/{auction.Id}");
+
+                        // Notify Losers (Everyone who bid but didn't win)
+                        var losingBidders = auction.Bids
+                            .Where(b => b.BidderId != winningBid.BidderId)
+                            .Select(b => b.BidderId)
+                            .Distinct()
+                            .ToList();
+
+                        foreach (var loserId in losingBidders)
+                        {
+                            await notificationService.NotifyUserAsync(loserId, 
+                                $"🔔 The auction for '{auction.Title}' has ended. Unfortunately, you did not win this time.", 
+                                $"/Auctions/Details/{auction.Id}");
+                        }
                     }
                     else
                     {

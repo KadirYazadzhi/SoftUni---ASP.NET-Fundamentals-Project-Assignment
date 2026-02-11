@@ -17,14 +17,14 @@ public static class DbSeeder
         {
             var categories = new List<Category>
             {
-                new Category { Name = "Electronics" },
-                new Category { Name = "Collectibles & Art" },
-                new Category { Name = "Fashion" },
-                new Category { Name = "Home & Garden" },
-                new Category { Name = "Auto Parts & Accessories" },
-                new Category { Name = "Toys & Hobbies" },
-                new Category { Name = "Sports" },
-                new Category { Name = "Books & Movies" }
+                new Category { Name = "Electronics", IconClass = "bi-laptop" },
+                new Category { Name = "Collectibles & Art", IconClass = "bi-palette" },
+                new Category { Name = "Fashion", IconClass = "bi-bag-heart" },
+                new Category { Name = "Home & Garden", IconClass = "bi-house-heart" },
+                new Category { Name = "Auto Parts & Accessories", IconClass = "bi-car-front" },
+                new Category { Name = "Toys & Hobbies", IconClass = "bi-joystick" },
+                new Category { Name = "Sports", IconClass = "bi-bicycle" },
+                new Category { Name = "Books & Movies", IconClass = "bi-book" }
             };
 
             await context.Categories.AddRangeAsync(categories);

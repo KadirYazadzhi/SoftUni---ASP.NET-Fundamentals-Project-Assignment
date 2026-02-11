@@ -11,5 +11,8 @@ public class Category
     [StringLength(50)]
     public string Name { get; set; } = null!;
 
+    [StringLength(50)]
+    public string IconClass { get; set; } = "bi-tag-fill"; // Default icon
+
     public virtual ICollection<Auction> Auctions { get; set; } = new HashSet<Auction>();
 }
