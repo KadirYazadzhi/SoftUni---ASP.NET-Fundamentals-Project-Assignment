@@ -3,8 +3,15 @@ using Microsoft.AspNetCore.Identity;
 using AuctionHub.Data;
 using AuctionHub.Models;
 using AuctionHub.Services;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Global Culture for Euro
+var cultureInfo = new CultureInfo("bg-BG");
+cultureInfo.NumberFormat.CurrencySymbol = "€";
+CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 

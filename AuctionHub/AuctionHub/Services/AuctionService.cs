@@ -29,12 +29,21 @@ public class AuctionService : IAuctionService
             if (auction == null) return (false, "Auction not found.");
 
             // Validations
+            var currentUser = await _context.Users.FindAsync(userId);
+            if (currentUser == null) return (false, "User not found.");
+
+            var userRoles = await _context.UserRoles.Where(ur => ur.UserId == userId).ToListAsync();
+            var adminRoleId = (await _context.Roles.FirstOrDefaultAsync(r => r.Name == "Administrator"))?.Id;
+            if (adminRoleId != null && userRoles.Any(ur => ur.RoleId == adminRoleId))
+            {
+                return (false, "Administrators are restricted from participating in auctions.");
+            }
+
             if (auction.SellerId == userId) return (false, "You cannot bid on your own auction.");
             if (!auction.IsActive || auction.EndTime <= DateTime.UtcNow) return (false, "This auction has ended.");
             if (amount < auction.CurrentPrice + auction.MinIncrease) return (false, $"Bid must be at least {auction.CurrentPrice + auction.MinIncrease:C}.");
 
-            var currentUser = await _context.Users.FindAsync(userId);
-            if (currentUser == null || currentUser.WalletBalance < amount) return (false, "Insufficient funds.");
+            if (currentUser.WalletBalance < amount) return (false, "Insufficient funds.");
 
             // 1. Charge User
             currentUser.WalletBalance -= amount;
@@ -140,6 +149,15 @@ public class AuctionService : IAuctionService
                 .FirstOrDefaultAsync(a => a.Id == auctionId);
 
             if (auction == null) return (false, "Auction not found.");
+            
+            // Validation: Restrict Admin
+            var userRoles = await _context.UserRoles.Where(ur => ur.UserId == userId).ToListAsync();
+            var adminRoleId = (await _context.Roles.FirstOrDefaultAsync(r => r.Name == "Administrator"))?.Id;
+            if (adminRoleId != null && userRoles.Any(ur => ur.RoleId == adminRoleId))
+            {
+                return (false, "Administrators are restricted from participating in auctions.");
+            }
+
             if (!auction.BuyItNowPrice.HasValue) return (false, "This auction does not support 'Buy It Now'.");
             
             decimal price = auction.BuyItNowPrice.Value;

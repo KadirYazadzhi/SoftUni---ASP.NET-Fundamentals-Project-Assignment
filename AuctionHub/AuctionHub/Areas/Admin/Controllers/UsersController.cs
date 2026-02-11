@@ -23,7 +23,10 @@ public class UsersController : AdminBaseController
 
         if (!string.IsNullOrEmpty(searchTerm))
         {
-            query = query.Where(u => u.Email.Contains(searchTerm) || u.UserName.Contains(searchTerm) || u.FirstName.Contains(searchTerm) || u.LastName.Contains(searchTerm));
+            query = query.Where(u => (u.Email != null && u.Email.Contains(searchTerm)) || 
+                                     (u.UserName != null && u.UserName.Contains(searchTerm)) || 
+                                     (u.FirstName != null && u.FirstName.Contains(searchTerm)) || 
+                                     (u.LastName != null && u.LastName.Contains(searchTerm)));
         }
 
         var users = await query.ToListAsync();

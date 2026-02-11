@@ -522,7 +522,7 @@ public class AuctionsController : Controller
             Categories = await GetCategoriesAsync(),
             EndTime = DateTime.UtcNow.AddDays(7),
             StartPrice = 10.00m,
-            MinIncrease = 1.00m
+            MinIncrease = 0.10m
         };
 
         return View(model);
