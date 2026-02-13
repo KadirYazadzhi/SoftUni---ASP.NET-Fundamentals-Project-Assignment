@@ -197,10 +197,22 @@
             }
         }
 
-        // Double Submission Prevention
+        // Prevent multiple form submissions (Double-Click protection)
         document.querySelector('form').addEventListener('submit', function (e) {
-            if ($(this).valid()) {
-                const btn = this.querySelector('button[type="submit"]');
+            const form = this;
+            
+            // If form is already submitting, cancel additional attempts
+            if (form.getAttribute('data-submitting') === 'true') {
+                e.preventDefault();
+                return false;
+            }
+
+            // Check if client-side validation passes
+            if ($(form).valid()) {
+                form.setAttribute('data-submitting', 'true');
+                const btn = form.querySelector('button[type="submit"]');
+                
+                // UI feedback
                 btn.disabled = true;
                 btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Publishing...';
             }

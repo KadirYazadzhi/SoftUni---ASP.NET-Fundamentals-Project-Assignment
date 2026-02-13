@@ -350,42 +350,54 @@ public class AuctionService : IAuctionService
 
     public async Task<int> CreateAuctionAsync(AuctionFormDto model, string sellerId)
     {
-        // Double submission prevention: Check if user created same title in last 10 seconds
-        var recentThreshold = DateTime.UtcNow.AddSeconds(-10);
-        var isDuplicate = await _context.Auctions.AnyAsync(a => 
-            a.SellerId == sellerId && 
-            a.Title == model.Title && 
-            a.CreatedOn >= recentThreshold);
+        // Start a high-isolation transaction to prevent race conditions during duplicate checks
+        using var dbTransaction = await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable);
 
-        if (isDuplicate)
+        try
         {
-            // In a real app we might throw a custom exception, here we return 0 or -1
-            // But since return type is 'int' (ID), we'll just skip or handle in controller
-            return -1; 
+            // Idempotency check: Ensure the same user hasn't published an identical auction title recently
+            var recentThreshold = DateTime.UtcNow.AddSeconds(-10);
+            var isDuplicate = await _context.Auctions.AnyAsync(a => 
+                a.SellerId == sellerId && 
+                a.Title == model.Title && 
+                a.CreatedOn >= recentThreshold);
+
+            if (isDuplicate)
+            {
+                return -1; // Indicate failure to the controller
+            }
+
+            var auction = new Auction
+            {
+                Title = model.Title,
+                Description = model.Description,
+                ImageUrl = model.ImageUrl,
+                StartPrice = model.StartPrice,
+                CurrentPrice = model.StartPrice,
+                MinIncrease = model.MinIncrease,
+                BuyItNowPrice = model.BuyItNowPrice,
+                EndTime = new DateTime(model.EndTime.Year, model.EndTime.Month, model.EndTime.Day, 
+                                     model.EndTime.Hour, model.EndTime.Minute, 0, 0, model.EndTime.Kind),
+                CreatedOn = DateTime.UtcNow,
+                IsActive = true,
+                CategoryId = model.CategoryId,
+                SellerId = sellerId,
+                RowVersion = new byte[8] // Default initialization for tracked entities
+            };
+
+            _context.Auctions.Add(auction);
+            await _context.SaveChangesAsync();
+            await dbTransaction.CommitAsync();
+
+            return auction.Id;
         }
-
-        var auction = new Auction
+        catch (Exception)
         {
-            Title = model.Title,
-            Description = model.Description,
-            ImageUrl = model.ImageUrl,
-            StartPrice = model.StartPrice,
-            CurrentPrice = model.StartPrice,
-            MinIncrease = model.MinIncrease,
-            BuyItNowPrice = model.BuyItNowPrice,
-            EndTime = new DateTime(model.EndTime.Year, model.EndTime.Month, model.EndTime.Day, 
-                                 model.EndTime.Hour, model.EndTime.Minute, 0, 0, model.EndTime.Kind),
-            CreatedOn = DateTime.UtcNow,
-            IsActive = true,
-            CategoryId = model.CategoryId,
-            SellerId = sellerId
-        };
-
-        _context.Auctions.Add(auction);
-        await _context.SaveChangesAsync();
-
-        return auction.Id;
+            await dbTransaction.RollbackAsync();
+            throw; // Let the global error handler or controller handle the crash
+        }
     }
+
 
     public async Task<(bool Success, string Message, string? OldImageUrl)> UpdateAuctionAsync(int id, AuctionFormDto model, string userId)
     {
