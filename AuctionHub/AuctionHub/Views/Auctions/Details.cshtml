@@ -2,27 +2,29 @@
 
 @{
     ViewData["Title"] = Model.Title;
+    var successMessage = TempData["Success"]?.ToString();
+    var errorMessage = TempData["Error"]?.ToString();
 }
 
 <div class="container py-5">
     <!-- Feedback Messages -->
-    @if (TempData["Success"] != null)
+    @if (!string.IsNullOrEmpty(successMessage))
     {
         <div class="alert alert-success alert-dismissible fade show rounded-pill shadow-sm mb-4 border-0 px-4 py-3 animate-fade-up" role="alert">
             <div class="d-flex align-items-center">
                 <i class="bi bi-check-circle-fill me-3 fs-4"></i>
-                <div>@TempData["Success"]</div>
+                <div>@successMessage</div>
             </div>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
 
-    @if (TempData["Error"] != null)
+    @if (!string.IsNullOrEmpty(errorMessage))
     {
         <div class="alert alert-danger alert-dismissible fade show rounded-pill shadow-sm mb-4 border-0 px-4 py-3 animate-fade-up" role="alert">
             <div class="d-flex align-items-center">
                 <i class="bi bi-exclamation-triangle-fill me-3 fs-4"></i>
-                <div>@TempData["Error"]</div>
+                <div>@errorMessage</div>
             </div>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
