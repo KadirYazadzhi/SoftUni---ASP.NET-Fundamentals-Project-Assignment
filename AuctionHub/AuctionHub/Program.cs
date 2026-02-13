@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using AuctionHub.Data;
-using AuctionHub.Models;
-using AuctionHub.Services;
+using AuctionHub.Infrastructure.Data;
+using AuctionHub.Domain.Models;
+using AuctionHub.Application.Interfaces;
+using AuctionHub.Application.Services;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,7 +21,12 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<AuctionHubDbContext>(options =>
     options.UseSqlServer(connectionString));
 
+builder.Services.AddScoped<IAuctionHubDbContext, AuctionHubDbContext>();
 builder.Services.AddScoped<IAuctionService, AuctionService>();
+builder.Services.AddScoped<IWalletService, WalletService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddSingleton<INotificationService, NotificationService>();
 builder.Services.AddHostedService<AuctionCleanupService>();
 

@@ -1,7 +1,9 @@
 using System.Diagnostics;
+using AuctionHub.Application.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using AuctionHub.Domain.Models;
 using AuctionHub.Models;
-using AuctionHub.Data;
+using AuctionHub.Application.Interfaces;
 using Microsoft.AspNetCore.Identity; 
 
 namespace AuctionHub.Controllers;
@@ -9,16 +11,16 @@ namespace AuctionHub.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private readonly AuctionHubDbContext _context;
+    private readonly IMessageService _messageService;
     private readonly UserManager<ApplicationUser> _userManager; 
     
     public HomeController(
         ILogger<HomeController> logger, 
-        AuctionHubDbContext context, 
+        IMessageService messageService, 
         UserManager<ApplicationUser> userManager)
     {
         _logger = logger;
-        _context = context;
+        _messageService = messageService;
         _userManager = userManager;
     }
 
@@ -32,7 +34,7 @@ public class HomeController : Controller
         ViewBag.UserName = "";
         ViewBag.UserEmail = "";
 
-        if (User.Identity.IsAuthenticated)
+        if (User.Identity?.IsAuthenticated ?? false)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user != null)
@@ -88,16 +90,14 @@ public class HomeController : Controller
             return RedirectToAction(nameof(About)); 
         }
 
-        var contactMessage = new ContactMessage
+        var contactMessage = new ContactMessageDto
         {
             Name = name,
             Email = email,
-            Message = message,
-            SentOn = DateTime.UtcNow
+            Message = message
         };
 
-        _context.ContactMessages.Add(contactMessage);
-        await _context.SaveChangesAsync();
+        await _messageService.CreateAsync(contactMessage);
 
         TempData["Success"] = "Thank you! Your message has been sent to our team.";
         return RedirectToAction(nameof(About));

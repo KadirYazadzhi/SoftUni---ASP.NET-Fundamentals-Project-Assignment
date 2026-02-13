@@ -1,4 +1,4 @@
-using AuctionHub.Data;
+using AuctionHub.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,20 +6,16 @@ namespace AuctionHub.Areas.Admin.Controllers;
 
 public class TransactionsController : AdminBaseController
 {
-    private readonly AuctionHubDbContext _context;
+    private readonly IWalletService _walletService;
 
-    public TransactionsController(AuctionHubDbContext context)
+    public TransactionsController(IWalletService walletService)
     {
-        _context = context;
+        _walletService = walletService;
     }
 
     public async Task<IActionResult> Index()
     {
-        var transactions = await _context.Transactions
-            .Include(t => t.User)
-            .OrderByDescending(t => t.TransactionDate)
-            .Take(100) // Limit for performance
-            .ToListAsync();
+        var transactions = await _walletService.GetAllTransactionsAsync(100);
 
         return View(transactions);
     }

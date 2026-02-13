@@ -1,4 +1,4 @@
-using AuctionHub.Data;
+using AuctionHub.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,10 +6,10 @@ namespace AuctionHub.Areas.Admin.Controllers;
 
 public class DashboardController : AdminBaseController
 {
-    private readonly AuctionHubDbContext _context;
-    private readonly Services.INotificationService _notificationService;
+    private readonly IAuctionHubDbContext _context;
+    private readonly INotificationService _notificationService;
 
-    public DashboardController(AuctionHubDbContext context, Services.INotificationService notificationService)
+    public DashboardController(IAuctionHubDbContext context, INotificationService notificationService)
     {
         _context = context;
         _notificationService = notificationService;

@@ -196,5 +196,26 @@
                 fileNamePreview.classList.add('d-none');
             }
         }
+
+        // Prevent multiple form submissions (Double-Click protection)
+        const auctionForm = document.querySelector('form');
+        auctionForm.addEventListener('submit', function (e) {
+            if (auctionForm.getAttribute('data-submitting') === 'true') {
+                e.preventDefault();
+                return false;
+            }
+
+            if ($(auctionForm).valid()) {
+                auctionForm.setAttribute('data-submitting', 'true');
+                
+                const btn = auctionForm.querySelector('button[type="submit"]');
+                // Use a slight timeout to allow the browser to process the submit before visual disabling
+                setTimeout(() => {
+                    btn.classList.add('opacity-50');
+                    btn.style.pointerEvents = 'none';
+                    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Publishing...';
+                }, 10);
+            }
+        });
     </script>
 }
