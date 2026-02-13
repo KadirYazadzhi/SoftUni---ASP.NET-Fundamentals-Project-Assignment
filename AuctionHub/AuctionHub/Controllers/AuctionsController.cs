@@ -352,6 +352,10 @@ public class AuctionsController : Controller
 
         if (result.Success)
         {
+            if (!string.IsNullOrEmpty(result.OldImageUrl))
+            {
+                DeleteImage(result.OldImageUrl);
+            }
             return RedirectToAction(nameof(Details), new { id = id });
         }
         else
@@ -372,6 +376,10 @@ public class AuctionsController : Controller
 
         if (result.Success)
         {
+            if (!string.IsNullOrEmpty(result.ImageUrl))
+            {
+                DeleteImage(result.ImageUrl);
+            }
             TempData["Success"] = result.Message;
             return RedirectToAction(nameof(Index));
         }

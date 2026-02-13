@@ -373,22 +373,25 @@ public class AuctionService : IAuctionService
         return auction.Id;
     }
 
-    public async Task<(bool Success, string Message)> UpdateAuctionAsync(int id, AuctionFormDto model, string userId)
+    public async Task<(bool Success, string Message, string? OldImageUrl)> UpdateAuctionAsync(int id, AuctionFormDto model, string userId)
     {
         var auction = await _context.Auctions
             .Include(a => a.Bids)
             .FirstOrDefaultAsync(a => a.Id == id);
 
-        if (auction == null) return (false, "Auction not found.");
-        if (auction.SellerId != userId) return (false, "Forbidden.");
-        if (auction.Bids.Any()) return (false, "You cannot edit an auction that has existing bids.");
+        if (auction == null) return (false, "Auction not found.", null);
+        if (auction.SellerId != userId) return (false, "Forbidden.", null);
+        if (auction.Bids.Any()) return (false, "You cannot edit an auction that has existing bids.", null);
+
+        string? oldImageUrl = null;
+        if (!string.IsNullOrEmpty(model.ImageUrl) && model.ImageUrl != auction.ImageUrl)
+        {
+            oldImageUrl = auction.ImageUrl;
+            auction.ImageUrl = model.ImageUrl;
+        }
 
         auction.Title = model.Title;
         auction.Description = model.Description;
-        if (!string.IsNullOrEmpty(model.ImageUrl)) 
-        {
-            auction.ImageUrl = model.ImageUrl;
-        }
         
         auction.StartPrice = model.StartPrice;
         auction.MinIncrease = model.MinIncrease;
@@ -398,23 +401,24 @@ public class AuctionService : IAuctionService
         auction.CategoryId = model.CategoryId;
 
         await _context.SaveChangesAsync();
-        return (true, "Auction updated successfully.");
+        return (true, "Auction updated successfully.", oldImageUrl);
     }
 
-    public async Task<(bool Success, string Message)> DeleteAuctionAsync(int id, string userId)
+    public async Task<(bool Success, string Message, string? ImageUrl)> DeleteAuctionAsync(int id, string userId)
     {
         var auction = await _context.Auctions
             .Include(a => a.Bids)
             .FirstOrDefaultAsync(a => a.Id == id);
 
-        if (auction == null) return (false, "Auction not found.");
-        if (auction.SellerId != userId) return (false, "Forbidden.");
-        if (auction.Bids.Any()) return (false, "Cannot delete an auction that already has bids.");
+        if (auction == null) return (false, "Auction not found.", null);
+        if (auction.SellerId != userId) return (false, "Forbidden.", null);
+        if (auction.Bids.Any()) return (false, "Cannot delete an auction that already has bids.", null);
 
+        string? imageUrl = auction.ImageUrl;
         _context.Auctions.Remove(auction);
         await _context.SaveChangesAsync();
 
-        return (true, "Auction deleted successfully.");
+        return (true, "Auction deleted successfully.", imageUrl);
     }
 
     public async Task<(bool Success, string Message)> ToggleWatchlistAsync(int auctionId, string userId)
