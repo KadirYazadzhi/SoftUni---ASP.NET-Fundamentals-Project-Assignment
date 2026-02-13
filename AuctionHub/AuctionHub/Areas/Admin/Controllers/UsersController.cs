@@ -1,5 +1,5 @@
-using AuctionHub.Data;
-using AuctionHub.Models;
+using AuctionHub.Application.Interfaces;
+using AuctionHub.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -8,10 +8,10 @@ namespace AuctionHub.Areas.Admin.Controllers;
 
 public class UsersController : AdminBaseController
 {
-    private readonly AuctionHubDbContext _context;
+    private readonly IAuctionHubDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public UsersController(AuctionHubDbContext context, UserManager<ApplicationUser> userManager)
+    public UsersController(IAuctionHubDbContext context, UserManager<ApplicationUser> userManager)
     {
         _context = context;
         _userManager = userManager;

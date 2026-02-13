@@ -1,4 +1,4 @@
-using AuctionHub.Data;
+using AuctionHub.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,9 +6,9 @@ namespace AuctionHub.Areas.Admin.Controllers;
 
 public class MessagesController : AdminBaseController
 {
-    private readonly AuctionHubDbContext _context;
+    private readonly IAuctionHubDbContext _context;
 
-    public MessagesController(AuctionHubDbContext context)
+    public MessagesController(IAuctionHubDbContext context)
     {
         _context = context;
     }

@@ -1,8 +1,7 @@
 using System.Security.Claims;
-using AuctionHub.Data;
-using AuctionHub.Models;
+using AuctionHub.Application.Interfaces;
+using AuctionHub.Domain.Models;
 using AuctionHub.Models.ViewModels;
-using AuctionHub.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,11 +12,11 @@ namespace AuctionHub.Controllers;
 [Authorize]
 public class AuctionsController : Controller
 {
-    private readonly AuctionHubDbContext _context;
+    private readonly IAuctionHubDbContext _context;
     private readonly IWebHostEnvironment _webHostEnvironment;
     private readonly IAuctionService _auctionService;
 
-    public AuctionsController(AuctionHubDbContext context, IWebHostEnvironment webHostEnvironment, IAuctionService auctionService)
+    public AuctionsController(IAuctionHubDbContext context, IWebHostEnvironment webHostEnvironment, IAuctionService auctionService)
     {
         _context = context;
         _webHostEnvironment = webHostEnvironment;

@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using AuctionHub.Models;
+using AuctionHub.Domain.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;

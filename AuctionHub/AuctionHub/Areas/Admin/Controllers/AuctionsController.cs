@@ -1,5 +1,5 @@
-using AuctionHub.Data;
-using AuctionHub.Models;
+using AuctionHub.Application.Interfaces;
+using AuctionHub.Domain.Models;
 using AuctionHub.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -8,11 +8,13 @@ namespace AuctionHub.Areas.Admin.Controllers;
 
 public class AuctionsController : AdminBaseController
 {
-    private readonly AuctionHubDbContext _context;
+    private readonly IAuctionHubDbContext _context;
+    private readonly INotificationService _notificationService;
 
-    public AuctionsController(AuctionHubDbContext context)
+    public AuctionsController(IAuctionHubDbContext context, INotificationService notificationService)
     {
         _context = context;
+        _notificationService = notificationService;
     }
 
     public async Task<IActionResult> Index()
@@ -73,24 +75,16 @@ public class AuctionsController : AdminBaseController
                     });
 
                     // Notify Bidder
-                    var notificationService = HttpContext.RequestServices.GetService<Services.INotificationService>();
-                    if (notificationService != null)
-                    {
-                        await notificationService.NotifyUserAsync(bidder.Id, 
-                            $"⚠️ The auction '{auction.Title}' was suspended by administration. Your bid of {highestBid.Amount:C} has been fully refunded.", 
-                            "#");
-                    }
+                    await _notificationService.NotifyUserAsync(bidder.Id, 
+                        $"⚠️ The auction '{auction.Title}' was suspended by administration. Your bid of {highestBid.Amount:C} has been fully refunded.", 
+                        "#");
                 }
             }
 
             // 3. Notify Seller
-            var notificationService2 = HttpContext.RequestServices.GetService<Services.INotificationService>();
-            if (notificationService2 != null)
-            {
-                await notificationService2.NotifyUserAsync(auction.SellerId, 
-                    $"⛔ Your auction '{auction.Title}' has been suspended due to a policy violation.", 
-                    "#");
-            }
+            await _notificationService.NotifyUserAsync(auction.SellerId, 
+                $"⛔ Your auction '{auction.Title}' has been suspended due to a policy violation.", 
+                "#");
 
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
@@ -106,3 +100,4 @@ public class AuctionsController : AdminBaseController
         return RedirectToAction(nameof(Index));
     }
 }
+

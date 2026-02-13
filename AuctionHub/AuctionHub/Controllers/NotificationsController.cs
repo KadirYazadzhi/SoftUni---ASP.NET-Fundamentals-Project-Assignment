@@ -1,7 +1,6 @@
 using System.Security.Claims;
-using AuctionHub.Data;
-using AuctionHub.Models;
-using AuctionHub.Services;
+using AuctionHub.Application.Interfaces;
+using AuctionHub.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,10 +10,10 @@ namespace AuctionHub.Controllers;
 [Authorize]
 public class NotificationsController : Controller
 {
-    private readonly AuctionHubDbContext _context;
+    private readonly IAuctionHubDbContext _context;
     private readonly INotificationService _notificationService;
 
-    public NotificationsController(AuctionHubDbContext context, INotificationService notificationService)
+    public NotificationsController(IAuctionHubDbContext context, INotificationService notificationService)
     {
         _context = context;
         _notificationService = notificationService;

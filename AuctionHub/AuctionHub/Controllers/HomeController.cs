@@ -1,7 +1,8 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using AuctionHub.Domain.Models;
 using AuctionHub.Models;
-using AuctionHub.Data;
+using AuctionHub.Application.Interfaces;
 using Microsoft.AspNetCore.Identity; 
 
 namespace AuctionHub.Controllers;
@@ -9,12 +10,12 @@ namespace AuctionHub.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private readonly AuctionHubDbContext _context;
+    private readonly IAuctionHubDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager; 
     
     public HomeController(
         ILogger<HomeController> logger, 
-        AuctionHubDbContext context, 
+        IAuctionHubDbContext context, 
         UserManager<ApplicationUser> userManager)
     {
         _logger = logger;
@@ -32,7 +33,7 @@ public class HomeController : Controller
         ViewBag.UserName = "";
         ViewBag.UserEmail = "";
 
-        if (User.Identity.IsAuthenticated)
+        if (User.Identity?.IsAuthenticated ?? false)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user != null)

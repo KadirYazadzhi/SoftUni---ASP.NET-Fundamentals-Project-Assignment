@@ -1,6 +1,6 @@
 using System.Security.Claims;
-using AuctionHub.Data;
-using AuctionHub.Models;
+using AuctionHub.Application.Interfaces;
+using AuctionHub.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +12,9 @@ namespace AuctionHub.Controllers;
 public class WalletController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly AuctionHubDbContext _context;
+    private readonly IAuctionHubDbContext _context;
 
-    public WalletController(UserManager<ApplicationUser> userManager, AuctionHubDbContext context)
+    public WalletController(UserManager<ApplicationUser> userManager, IAuctionHubDbContext context)
     {
         _userManager = userManager;
         _context = context;

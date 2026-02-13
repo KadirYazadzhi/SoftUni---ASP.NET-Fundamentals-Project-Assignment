@@ -1,5 +1,5 @@
-using AuctionHub.Data;
-using AuctionHub.Models;
+using AuctionHub.Application.Interfaces;
+using AuctionHub.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,9 +9,9 @@ namespace AuctionHub.Controllers;
 [Authorize(Roles = "Administrator")]
 public class CategoriesController : Controller
 {
-    private readonly AuctionHubDbContext _context;
+    private readonly IAuctionHubDbContext _context;
 
-    public CategoriesController(AuctionHubDbContext context)
+    public CategoriesController(IAuctionHubDbContext context)
     {
         _context = context;
     }
