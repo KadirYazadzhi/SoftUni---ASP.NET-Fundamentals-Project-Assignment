@@ -44,13 +44,13 @@
                                         }
                                     </div>
                                     <div>
-                                        <div class="fw-bold text-dark">@user.DisplayName</div>
+                                        <div class="fw-bold">@user.DisplayName</div>
                                         <small class="text-muted">@user.Email</small>
                                     </div>
                                 </div>
                             </td>
-                            <td><span class="badge bg-light text-dark border">User</span></td>
-                            <td class="fw-bold">@user.WalletBalance.ToString("C")</td>
+                            <td><span class="badge bg-light text-muted border">User</span></td>
+                            <td class="fw-bold admin-price-value">@user.WalletBalance.ToString("C")</td>
                             <td>
                                 @if (user.LockoutEnd > DateTimeOffset.UtcNow)
                                 {

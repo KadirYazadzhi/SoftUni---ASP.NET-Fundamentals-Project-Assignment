@@ -76,7 +76,8 @@ using (var scope = app.Services.CreateScope())
     await context.Database.MigrateAsync();
     
     // Fix users without UserNames or with Email as UserName (Optimized)
-    var usersToFix = await context.Users
+    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+    var usersToFix = await userManager.Users
         .Where(u => string.IsNullOrEmpty(u.UserName) || u.UserName.Contains("@"))
         .ToListAsync();
 
@@ -87,7 +88,14 @@ using (var scope = app.Services.CreateScope())
             var source = !string.IsNullOrEmpty(user.UserName) ? user.UserName : user.Email;
             if (!string.IsNullOrEmpty(source) && source.Contains("@"))
             {
-                user.UserName = source.Split('@')[0];
+                var newUserName = source.Split('@')[0];
+                
+                // Ensure the new username is not already taken
+                if (!await userManager.Users.AnyAsync(u => u.UserName == newUserName))
+                {
+                    user.UserName = newUserName;
+                    await userManager.UpdateNormalizedUserNameAsync(user);
+                }
             }
         }
         await context.SaveChangesAsync();

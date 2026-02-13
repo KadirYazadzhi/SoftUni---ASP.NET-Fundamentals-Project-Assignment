@@ -75,7 +75,7 @@
 
                             <div class="col-12">
                                 <label asp-for="EndTime" class="form-label small text-muted fw-bold text-uppercase">Auction End Date & Time</label>
-                                <input asp-for="EndTime" class="form-control form-control-lg rounded-pill px-4 bg-light border-0" type="datetime-local" />
+                                <input asp-for="EndTime" class="form-control form-control-lg rounded-pill px-4 bg-light border-0" type="datetime-local" step="60" />
                                 <span asp-validation-for="EndTime" class="text-danger small ms-3"></span>
                             </div>
                         </div>

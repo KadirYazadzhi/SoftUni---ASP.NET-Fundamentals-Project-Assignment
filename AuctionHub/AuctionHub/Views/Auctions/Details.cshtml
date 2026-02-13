@@ -105,7 +105,7 @@
                         }
                         
                         <span class="text-muted small text-uppercase letter-spacing-1 fw-bold mb-2 d-block">Current High Bid</span>
-                        <div class="display-3 fw-bolder text-primary mb-1">@Model.CurrentPrice.ToString("C")</div>
+                        <div class="display-3 fw-bolder text-primary mb-1 price-value">@Model.CurrentPrice.ToString("C")</div>
                         <div class="d-flex justify-content-center gap-3 mt-3">
                             <span class="badge @(Model.IsActive ? "bg-success" : (Model.IsSuspended ? "bg-danger" : "bg-secondary")) rounded-pill px-3 py-2">
                                 @(Model.IsActive ? "Active" : (Model.IsSuspended ? "Suspended" : "Closed"))
@@ -123,7 +123,7 @@
                     @if (User.Identity?.IsAuthenticated == true && Model.IsActive && Model.BuyItNowPrice.HasValue && Model.SellerId != User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value && Model.CurrentPrice < Model.BuyItNowPrice)
                     {
                         bool isAdmin = User.IsInRole("Administrator");
-                        <div class="card border-0 bg-success bg-opacity-10 rounded-5 mb-4 @(isAdmin ? "opacity-50" : "")" style="@(isAdmin ? "cursor: not-allowed;" : "")">
+                        <div class="card border-0 bg-success bg-opacity-10 buy-it-now-card rounded-5 mb-4 @(isAdmin ? "opacity-50" : "")" style="@(isAdmin ? "cursor: not-allowed;" : "")">
                             <div class="card-body p-4 d-flex justify-content-between align-items-center">
                                 <div>
                                     <h6 class="fw-bold text-success mb-1">Buy It Now</h6>
@@ -170,9 +170,13 @@
                                         <form asp-action="PlaceBid" method="post">
                                             <input type="hidden" name="AuctionId" value="@Model.Id" />
                                             <div class="input-group input-group-lg mb-3">
-                                                <span class="input-group-text bg-white border-end-0 rounded-start-pill ps-4 fw-bold text-primary">$</span>
-                                                <input type="number" step="0.01" class="form-control border-start-0 rounded-end-pill py-3" 
-                                                       name="Amount" value="@Model.NewBidAmount" min="@Model.NewBidAmount">
+                                                <span class="input-group-text bg-white border-end-0 rounded-start-pill ps-4 fw-bold text-primary">@System.Globalization.CultureInfo.CurrentCulture.NumberFormat.CurrencySymbol</span>
+                                                <input type="text" 
+                                                       class="form-control border-start-0 rounded-end-pill py-3" 
+                                                       name="Amount" 
+                                                       value="@Model.NewBidAmount.ToString("N2")" 
+                                                       oninput="this.value = this.value.replace(/[^0-9,.]/g, '').replace('.', ',')"
+                                                       inputmode="decimal">
                                             </div>
                                             <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold py-3 shadow-sm hover-lift">
                                                 Place Your Bid
@@ -227,7 +231,7 @@
                                         <div class="flex-grow-1">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <strong class="text-dark">@bid.Bidder</strong>
-                                                <span class="fw-bold text-primary">@bid.Amount.ToString("C")</span>
+                                                <span class="fw-bold text-primary price-value">@bid.Amount.ToString("C")</span>
                                             </div>
                                             <small class="text-muted x-small">@bid.BidTime.ToLocalTime().ToString("MMM dd, HH:mm")</small>
                                         </div>

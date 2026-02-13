@@ -449,7 +449,9 @@ public class AuctionsController : Controller
             StartPrice = auction.StartPrice,
             MinIncrease = auction.MinIncrease,
             BuyItNowPrice = auction.BuyItNowPrice,
-            EndTime = auction.EndTime,
+            // Strip seconds/milliseconds for the view
+            EndTime = new DateTime(auction.EndTime.Year, auction.EndTime.Month, auction.EndTime.Day, 
+                                 auction.EndTime.Hour, auction.EndTime.Minute, 0, 0, auction.EndTime.Kind),
             CategoryId = auction.CategoryId,
             Categories = await GetCategoriesAsync()
         };
@@ -502,7 +504,11 @@ public class AuctionsController : Controller
         auction.StartPrice = model.StartPrice;
         auction.MinIncrease = model.MinIncrease;
         auction.BuyItNowPrice = model.BuyItNowPrice;
-        auction.EndTime = model.EndTime;
+        
+        // Strip seconds/milliseconds
+        auction.EndTime = new DateTime(model.EndTime.Year, model.EndTime.Month, model.EndTime.Day, 
+                                     model.EndTime.Hour, model.EndTime.Minute, 0, 0, model.EndTime.Kind);
+                                     
         auction.CategoryId = model.CategoryId;
 
         await _context.SaveChangesAsync();
@@ -540,10 +546,12 @@ public class AuctionsController : Controller
     [HttpGet]
     public async Task<IActionResult> Create()
     {
+        var now = DateTime.UtcNow;
         var model = new AuctionFormModel
         {
             Categories = await GetCategoriesAsync(),
-            EndTime = DateTime.UtcNow.AddDays(7),
+            // Strip seconds/milliseconds for initial value
+            EndTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0, 0, now.Kind).AddDays(7),
             StartPrice = 10.00m,
             MinIncrease = 0.10m
         };
@@ -588,7 +596,9 @@ public class AuctionsController : Controller
             CurrentPrice = model.StartPrice,
             MinIncrease = model.MinIncrease,
             BuyItNowPrice = model.BuyItNowPrice,
-            EndTime = model.EndTime,
+            // Strip seconds/milliseconds
+            EndTime = new DateTime(model.EndTime.Year, model.EndTime.Month, model.EndTime.Day, 
+                                 model.EndTime.Hour, model.EndTime.Minute, 0, 0, model.EndTime.Kind),
             CreatedOn = DateTime.UtcNow,
             IsActive = true,
             CategoryId = model.CategoryId,
