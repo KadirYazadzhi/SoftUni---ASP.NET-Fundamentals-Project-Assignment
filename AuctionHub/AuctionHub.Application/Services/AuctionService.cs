@@ -350,8 +350,8 @@ public class AuctionService : IAuctionService
 
     public async Task<int> CreateAuctionAsync(AuctionFormDto model, string sellerId)
     {
-        // Start a high-isolation transaction to prevent race conditions during duplicate checks
-        using var dbTransaction = await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable);
+        // Use standard transaction to prevent deadlocks while still ensuring atomicity
+        using var dbTransaction = await _context.Database.BeginTransactionAsync();
 
         try
         {
@@ -364,7 +364,7 @@ public class AuctionService : IAuctionService
 
             if (isDuplicate)
             {
-                return -1; // Indicate failure to the controller
+                return -1;
             }
 
             var auction = new Auction
@@ -382,7 +382,7 @@ public class AuctionService : IAuctionService
                 IsActive = true,
                 CategoryId = model.CategoryId,
                 SellerId = sellerId,
-                RowVersion = new byte[8] // Default initialization for tracked entities
+                RowVersion = new byte[8]
             };
 
             _context.Auctions.Add(auction);
@@ -394,7 +394,7 @@ public class AuctionService : IAuctionService
         catch (Exception)
         {
             await dbTransaction.RollbackAsync();
-            throw; // Let the global error handler or controller handle the crash
+            throw;
         }
     }
 

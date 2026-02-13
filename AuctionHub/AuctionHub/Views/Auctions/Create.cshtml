@@ -201,19 +201,18 @@
         document.querySelector('form').addEventListener('submit', function (e) {
             const form = this;
             
-            // If form is already submitting, cancel additional attempts
             if (form.getAttribute('data-submitting') === 'true') {
                 e.preventDefault();
                 return false;
             }
 
-            // Check if client-side validation passes
             if ($(form).valid()) {
                 form.setAttribute('data-submitting', 'true');
-                const btn = form.querySelector('button[type="submit"]');
                 
-                // UI feedback
-                btn.disabled = true;
+                // UI feedback without disabling (to avoid browser-level cancellation)
+                const btn = form.querySelector('button[type="submit"]');
+                btn.classList.add('opacity-50');
+                btn.style.pointerEvents = 'none'; // Prevent mouse interaction
                 btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Publishing...';
             }
         });
