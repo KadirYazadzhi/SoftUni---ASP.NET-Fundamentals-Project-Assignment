@@ -196,5 +196,14 @@
                 fileNamePreview.classList.add('d-none');
             }
         }
+
+        // Double Submission Prevention
+        document.querySelector('form').addEventListener('submit', function (e) {
+            if ($(this).valid()) {
+                const btn = this.querySelector('button[type="submit"]');
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Publishing...';
+            }
+        });
     </script>
 }

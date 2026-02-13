@@ -350,6 +350,20 @@ public class AuctionService : IAuctionService
 
     public async Task<int> CreateAuctionAsync(AuctionFormDto model, string sellerId)
     {
+        // Double submission prevention: Check if user created same title in last 10 seconds
+        var recentThreshold = DateTime.UtcNow.AddSeconds(-10);
+        var isDuplicate = await _context.Auctions.AnyAsync(a => 
+            a.SellerId == sellerId && 
+            a.Title == model.Title && 
+            a.CreatedOn >= recentThreshold);
+
+        if (isDuplicate)
+        {
+            // In a real app we might throw a custom exception, here we return 0 or -1
+            // But since return type is 'int' (ID), we'll just skip or handle in controller
+            return -1; 
+        }
+
         var auction = new Auction
         {
             Title = model.Title,

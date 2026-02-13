@@ -447,6 +447,13 @@ public class AuctionsController : Controller
 
         var id = await _auctionService.CreateAuctionAsync(dto, currentUserId);
 
+        if (id == -1)
+        {
+            TempData["Error"] = "A similar auction was recently published. Please wait a few seconds.";
+            model.Categories = await GetCategoriesAsync();
+            return View(model);
+        }
+
         return RedirectToAction(nameof(Index));
     }
 
