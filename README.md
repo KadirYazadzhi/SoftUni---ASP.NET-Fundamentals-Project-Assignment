@@ -7,7 +7,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat)](LICENSE)
 [![Live Demo](https://img.shields.io/badge/Live_Demo-Azure-blue?style=flat&logo=microsoft-azure)](https://auctionhub-kadir.azurewebsites.net/)
 
-> **AuctionHub** is a robust, full-stack ASP.NET Core application designed to simulate a real-world auction environment. It features a complete financial ledger system, real-time bidding logic with concurrency protection, and a comprehensive administration dashboard.
+**AuctionHub** is a robust, full-stack ASP.NET Core application designed to simulate a real-world auction environment. It features a complete financial ledger system, real-time bidding logic with concurrency protection, and a comprehensive administration dashboard.
 
 <br />
 <img src="./preview/home-preview.png" width="100%" alt="AuctionHub Home Page" />
@@ -248,6 +248,27 @@ Run tests with:
 dotnet test
 
 ```
+
+## 🗺️ Roadmap & Future Plans
+
+The project is under active development. The following features are planned for the v2.0 release (ASP.NET Advanced Module):
+
+* **Real-Time Communication (SignalR):**
+    * Global chat for community discussions.
+    * Private secured chat between Seller and Winner after auction completion.
+    * Live bidding updates (price updates without page refresh).
+* **Reputation System:**
+    * User rating & reviews (allowed only after a verified transaction).
+    * "Top Seller" badges based on feedback score.
+* **Monetization:**
+    * "Promoted Auctions" feature: Users can pay a fee via their digital wallet to boost visibility.
+* **Smart Bidding:**
+    * Auto-bidder implementation (set a max price, system bids on your behalf).
+* **Cloud Integration:**
+    * Migrate image storage to Cloudinary/Azure Blob Storage.
+* **Testing:**
+    * Comprehensive Unit & Integration tests ensuring >90% code coverage.
+  
 
 ---
 
