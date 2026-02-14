@@ -1,10 +1,11 @@
+
 # 🔨 AuctionHub - Premium Digital Marketplace
 
 [![.NET 8.0](https://img.shields.io/badge/.NET-8.0-512BD4?style=flat&logo=dotnet)](https://dotnet.microsoft.com/)
 [![EF Core](https://img.shields.io/badge/EF%20Core-8.0-cyan?style=flat&logo=nuget)](https://docs.microsoft.com/en-us/ef/core/)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.0-7952B3?style=flat&logo=bootstrap)](https://getbootstrap.com/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Completed-success?style=flat)]()
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Azure-blue?style=flat&logo=microsoft-azure)](https://auctionhub-kadir.azurewebsites.net/)
 
 > **AuctionHub** is a robust, full-stack ASP.NET Core application designed to simulate a real-world auction environment. It features a complete financial ledger system, real-time bidding logic with concurrency protection, and a comprehensive administration dashboard.
 
@@ -43,14 +44,15 @@
 * **Auto-Refund:** If a user is outbid, their held funds are automatically released back to their available balance.
 * **Transaction Ledger:** A persistent history of all Deposits, Withdrawals, Holds, and Releases.
 
+### 🛡️ Administration Area
 * **Dashboard:** Real-time metrics (Total Users, Active Auctions, Volume).
 * **User Management:** Ability to view user details and history.
-* **Communication Hub:** Internal Inbox to read and manage user inquiries (Contact Messages).  
+* **Communication Hub:** Internal Inbox to read and manage user inquiries (Contact Messages).
 * **Moderation:** Admins can edit categories and suspend suspicious auctions.
 
 ### 🔔 User Engagement
 * **Notifications:** Alert system for "Auction Won", "Outbid", or "Auction Ended".
-* **Direct Support:** Integrated "Contact Us" form for user inquiries. <-- ДОБАВЕНО
+* **Direct Support:** Integrated "Contact Us" form for user inquiries.
 * **Search & Filter:** Advanced filtering by Category, Price Range, and Status.
 
 ---
