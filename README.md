@@ -255,7 +255,8 @@ dotnet test
 | 🟢 **Pass** | `BuyItNowAsync_ShouldFail_WhenNoBuyItNowPrice` | 26ms |
 | 🟢 **Pass** | `PlaceBidAsync_ShouldFail_WhenAuctionNotFound` | 2ms |
 
----
+### 📸 Execution Screenshot
+
 <img src="./preview/tests.png" width="100%" alt="Tests" />
 
 
