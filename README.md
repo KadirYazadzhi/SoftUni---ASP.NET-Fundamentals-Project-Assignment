@@ -149,25 +149,7 @@ The solution uses a **Monolithic Architecture** with clear separation of concern
 
 The database relies on strong relationships to ensure data integrity.
 
-```mermaid
-erDiagram
-    ApplicationUser ||--o{ Auction : "Creates"
-    ApplicationUser ||--o{ Bid : "Places"
-    ApplicationUser ||--o{ Transaction : "Has"
-    ApplicationUser ||--o{ Notification : "Receives"
-    
-    Auction ||--o{ Bid : "Contains"
-    Auction }|--|| Category : "In"
-    
-    Bid }|--|| ApplicationUser : "By"
-    
-    Transaction {
-        string Type "Deposit/Withdraw/Hold"
-        decimal Amount
-        datetime Date
-    }
-
-```
+<img src="./preview/database-scheme.png" width="100%" alt="Database Scheme" />
 
 ---
 
