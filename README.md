@@ -125,11 +125,12 @@
 
 ## 🏗️ Technical Architecture
 
-The solution uses a **Monolithic Architecture** with clear separation of concerns, following the **Service-Repository Pattern**.
+The solution implements a **Layered Architecture** (Clean Architecture principles) to ensure scalability, maintainability, and testability.
 
-* **Presentation Layer:** ASP.NET MVC (Controllers & Views).
-* **Service Layer:** Business logic resides here (e.g., `AuctionService`, `WalletService`). This makes the code testable and reusable.
-* **Data Layer:** Entity Framework Core with SQL Server.
+* **Presentation Layer (`AuctionHub`):** ASP.NET Core MVC (Controllers & Views). Handles user interaction and UI rendering.
+* **Application Layer (`AuctionHub.Application`):** Contains all business logic and service interfaces. This layer is independent of the database and UI.
+* **Domain Layer (`AuctionHub.Domain`):** Defines the core entities and database models.
+* **Infrastructure Layer (`AuctionHub.Infrastructure`):** Handles data access (EF Core), database migrations, and external concerns.
 * **Background Services:**
     * `AuctionCleanupService`: A hosted service (`IHostedService`) that runs in the background to automatically close expired auctions and process transfers.
 
@@ -157,19 +158,25 @@ The database relies on strong relationships to ensure data integrity.
 
 ```text
 AuctionHub/
-├── Areas/
-│   ├── Admin/              # Administration Controllers & Views
-│   └── Identity/           # Auth Logic (Scaffolded)
-├── Controllers/            # MVC Controllers (Web Layer)
-├── Data/                   # DbContext & Seeding
-├── Models/                 # Database Entities
-│   └── ViewModels/         # DTOs for UI rendering
-├── Services/               # Business Logic Layer (The Core)
-│   ├── AuctionService.cs
-│   └── WalletService.cs
-├── Views/                  # Razor Pages
-└── wwwroot/                # Static files (CSS, JS, Images)
-
+├── AuctionHub/                   # Web Presentation Layer (ASP.NET Core MVC)
+│   ├── Areas/
+│   │   ├── Admin/                # Administration Area
+│   │   └── Identity/             # Authentication Pages
+│   ├── Controllers/              # MVC Controllers
+│   ├── Views/                    # Razor Views
+│   ├── wwwroot/                  # Static Files (CSS, JS)
+│   ├── appsettings.json          # Configuration
+│   └── Program.cs                # Entry Point & DI Configuration
+├── AuctionHub.Application/       # Application Layer (Business Logic)
+│   ├── DTOs/                     # Data Transfer Objects
+│   ├── Interfaces/               # Service Contracts
+│   └── Services/                 # Service Implementations (Auction, Wallet, etc.)
+├── AuctionHub.Domain/            # Domain Layer (Core Entities)
+│   └── Models/                   # Database Models
+├── AuctionHub.Infrastructure/    # Infrastructure Layer (Data Access)
+│   ├── Data/                     # DbContext & Seeding
+│   └── Migrations/               # EF Core Migrations
+└── AuctionHub.Tests/             # Unit Tests
 ```
 
 ---
@@ -187,18 +194,19 @@ To run this project locally, follow these steps:
 
 ```bash
 git clone https://github.com/KadirYazadzhi/SoftUni---ASP.NET-Fundamentals-Project-Assignment
+cd SoftUni---ASP.NET-Fundamentals-Project-Assignment/AuctionHub
 
 ```
 
 3. **Configure Connection:**
 
-* Open `appsettings.json`.
+* Open `AuctionHub/appsettings.json`.
 * Modify `"DefaultConnection"` string if necessary.
 
 4. **Database Migration:**
 
 ```bash
-dotnet ef database update
+dotnet ef database update --project AuctionHub.Infrastructure --startup-project AuctionHub
 
 ```
 
@@ -206,6 +214,7 @@ dotnet ef database update
 5. **Run:**
 
 ```bash
+cd AuctionHub
 dotnet run
 
 ```
