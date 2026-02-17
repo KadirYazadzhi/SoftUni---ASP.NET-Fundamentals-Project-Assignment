@@ -194,8 +194,8 @@ You can set up the project using either **Docker** (Recommended) or a **Standard
 
 2. **Clone the Repo:**
    ```bash
-   git clone https://github.com/KadirYazadzhi/SoftUni---ASP.NET-Fundamentals-Project-Assignment
-   cd SoftUni---ASP.NET-Fundamentals-Project-Assignment
+   git clone https://github.com/KadirYazadzhi/AuctionHub
+   cd AuctionHub
    ```
 
 3. **Start the Database:**
@@ -227,8 +227,8 @@ You can set up the project using either **Docker** (Recommended) or a **Standard
 
 2. **Clone the Repo:**
    ```bash
-   git clone https://github.com/KadirYazadzhi/SoftUni---ASP.NET-Fundamentals-Project-Assignment
-   cd SoftUni---ASP.NET-Fundamentals-Project-Assignment/AuctionHub
+   git clone https://github.com/KadirYazadzhi/AuctionHub
+   cd AuctionHub/AuctionHub
    ```
 
 3. **Configure Connection:**
@@ -250,7 +250,7 @@ You can set up the project using either **Docker** (Recommended) or a **Standard
 
 ### 🔑 Login Credentials (Seed Data)
 
-* **Admin:** `admin@auctionhub.com` / `Admin123!` (Check `DbSeeder.cs` to confirm)
+* **Admin:** `admin@auctionhub.com` or `admin` / `Admin123!` (Check `DbSeeder.cs` to confirm)
 * **User:** You can register a new user normally.
 
 ---
